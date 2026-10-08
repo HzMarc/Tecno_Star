@@ -1,7 +1,10 @@
 RewriteEngine On
 RewriteBase /Tecno_Star/public/
 
+# No permite listar carpetas ni servir archivos de configuración.
+Options -Indexes
+RewriteRule ^(?:\.|.*\.(?:env|ini|log|sql|bak|backup))$ - [F,L,NC]
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [L]
-

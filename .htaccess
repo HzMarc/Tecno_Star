@@ -1,0 +1,12 @@
+Options -Indexes
+
+RewriteEngine On
+
+# El único punto de entrada público de la aplicación es /public/.
+RewriteRule ^$ /Tecno_Star/public/ [R=302,L]
+
+# Bloquea el acceso web a código, configuración, rutas y archivos internos.
+RewriteRule ^(?:app|config|core|routes|storage|graphify-out)(?:/|$) - [F,L,NC]
+
+# Bloquea archivos ocultos y archivos que nunca deben servirse al navegador.
+RewriteRule ^(?:\.|.*\.(?:env|ini|log|sql|bak|backup))$ - [F,L,NC]

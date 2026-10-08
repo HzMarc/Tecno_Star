@@ -11,6 +11,11 @@ final class Router
         $this->routes['GET'][$path] = $handler;
     }
 
+    public function post(string $path, callable|array $handler): void
+    {
+        $this->routes['POST'][$path] = $handler;
+    }
+
     public function dispatch(string $method, string $uri): mixed
     {
         $path = parse_url($uri, PHP_URL_PATH) ?: '/';
@@ -29,4 +34,3 @@ final class Router
         return $handler();
     }
 }
-
