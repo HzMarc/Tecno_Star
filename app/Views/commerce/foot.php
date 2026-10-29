@@ -1,0 +1,2 @@
+</main><?php if($admin): ?></div><?php else:require BASE_PATH.'/app/Views/store/partials/footer.php';require BASE_PATH.'/app/Views/store/partials/shopping-drawers.php'; ?><script src="<?= app_url_html('/assets/js/app.js?v='.filemtime(BASE_PATH.'/public/assets/js/app.js')) ?>"></script><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script><?php endif; ?>
+<div class="order-toasts" data-commerce-toasts role="status" aria-live="polite"></div></body></html>

@@ -1,0 +1,21 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const source=fs.readFileSync('public/assets/js/cash.js','utf8');
+function setup({storage=new Map(),responses=[]}={}){
+    const node=()=>({value:'',hidden:true,disabled:false,readOnly:false,listeners:{},textContent:'',addEventListener(name,fn){this.listeners[name]=fn;}});
+    const nodes=new Map();for(const name of ['cash-review','cash-modal','cash-confirm','cash-error','cash-pending','cash-retry','cash-check','cash-preview','cash-confirm-received','cash-confirm-change'])nodes.set(name,node());
+    const modal=nodes.get('cash-modal');modal.open=false;modal.showModal=()=>modal.open=true;modal.close=()=>modal.open=false;const close=node();
+    const form=node();form.action='http://localhost/sales/pay';form.dataset={owner:'1',total:'24.99',statusUrl:'http://localhost/admin/cash/status'};form.elements={recibido:node(),solicitud:{value:'a'.repeat(64)},id_pedido:{value:'7'},target_user_id:{value:'1'},_csrf:{value:'csrf'},confirmado:{value:'1'},return_to:{value:'cash'}};form.querySelector=s=>nodes.get(s.slice(6,-1));form.querySelectorAll=()=>[close];form.reportValidity=()=>true;
+    const requests=[],locations=[];let reloads=0;class Data{constructor(){return Object.entries(form.elements).map(([key,n])=>[key,n.value]);}}
+    const location=new URL('http://localhost/admin/cash?id=7#cash-payment');location.assign=url=>locations.push(url);location.reload=()=>reloads++;
+    vm.runInNewContext(source,{document:{querySelector:()=>form},FormData:Data,URLSearchParams,URL,AbortController,setTimeout,clearTimeout,sessionStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)},location,fetch:async(url,options)=>{requests.push([String(url),options]);const next=responses.shift();if(next instanceof Error)throw next;return {ok:next.status===200,status:next.status,json:async()=>next.body};}});
+    return {form,nodes,modal,storage,requests,locations,close,get reloads(){return reloads;}};
+}
+const event={preventDefault(){}};const tick=()=>new Promise(resolve=>setImmediate(resolve));
+(async()=>{
+    let t=setup();t.form.elements.recibido.value='50.00';t.form.elements.recibido.listeners.input();assert.equal(t.nodes.get('cash-preview').textContent,'$25.01');t.form.listeners.submit(event);assert.equal(t.modal.open,true);assert.equal(t.requests.length,0);t.close.listeners.click();assert.equal(t.requests.length,0);
+    t=setup({responses:[new Error('lost'),{status:200,body:{ok:true,found:false,charged:false}},{status:200,body:{ok:true,location:'/admin/cash?id=7'}}]});t.form.elements.recibido.value='50.00';t.form.listeners.submit(event);t.nodes.get('cash-confirm').listeners.click();t.nodes.get('cash-confirm').listeners.click();await tick();assert.equal(t.requests.length,1);assert.equal(t.form.elements.recibido.readOnly,true);assert.equal(t.nodes.get('cash-pending').hidden,false);assert.equal(t.nodes.get('cash-retry').hidden,true);
+    await t.nodes.get('cash-check').listeners.click();assert.equal(t.requests.length,2);assert.equal(t.nodes.get('cash-retry').hidden,false);t.nodes.get('cash-retry').listeners.click();await tick();assert.equal(t.requests[0][1].body.get('solicitud'),t.requests[2][1].body.get('solicitud'));assert.equal(t.requests[2][1].body.get('recibido'),'50.00');assert.equal(t.reloads,1);assert.deepEqual(t.locations,[]);assert.equal(t.storage.has('tecno-cash-1-7'),false);
+    const pending=JSON.stringify({target_user_id:'1',id_pedido:'7',solicitud:'b'.repeat(64),recibido:'50.00'});t=setup({storage:new Map([['tecno-cash-1-7',pending]]),responses:[{status:200,body:{ok:true,found:true,location:'/admin/cash?id=7'}}]});assert.equal(t.form.elements.recibido.value,'50.00');assert.equal(t.nodes.get('cash-review').disabled,true);await t.nodes.get('cash-check').listeners.click();assert.equal(t.requests[0][1].method,undefined);assert.equal(t.reloads,1);assert.deepEqual(t.locations,[]);
+    t=setup();t.form.elements.recibido.value='24.98';t.form.listeners.submit(event);assert.equal(t.modal.open,false);assert.equal(t.requests.length,0);
+    console.log('OK: cambio exacto, confirmación sin escritura, doble clic, respuesta perdida, recuperación y reintento con la misma solicitud.');
+})().catch(error=>{console.error(error);process.exitCode=1;});

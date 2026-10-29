@@ -1,0 +1,1 @@
+<a class="admin-back-link" href="<?= app_url_html($adminBackPath ?? '/admin') ?>"><i class="bi bi-arrow-left" aria-hidden="true"></i> <?= htmlspecialchars($adminBackLabel ?? 'Volver al inicio', ENT_QUOTES, 'UTF-8') ?></a>

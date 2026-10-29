@@ -1,0 +1,31 @@
+/* DataTables compartido: productos, categorías, marcas e inventario. */
+.admin-table-panel--enhanced > .catalog-results,
+.admin-table-panel--enhanced > .catalog-pagination,
+.admin-table-panel--enhanced > .admin-empty-state { display:none; }
+.admin-table-panel .dt-container { --dt-paging-button_color-current:#fff; --dt-paging-button_color-current-hover:#fff; --dt-paging-button_color-hover:#fff; width:100%; padding:0 .85rem; font-size:.8rem; color:#475467; }
+.admin-table-panel .dt-layout-row { padding:.6rem .35rem; gap:.75rem; }
+.admin-table-panel .dt-layout-table { padding:0; }
+.admin-table-panel table.dataTable { margin:0!important; width:100%!important; border-collapse:collapse; }
+.admin-table-panel .dt-length { display:flex; align-items:center; gap:.5rem; }
+.admin-table-panel .dt-input { min-height:40px; padding:.4rem .7rem; border:1px solid #cfd6df; border-radius:.5rem; background:#fff; color:#344054; font:inherit; }
+.admin-table-panel .dt-info { font-size:.75rem; color:#667085; }
+.admin-table-panel .dt-paging { display:flex; flex-wrap:wrap; align-items:center; gap:.25rem; }
+.admin-table-panel .dt-paging .dt-paging-button { min-width:38px; min-height:38px; margin:0; padding:.5rem .6rem!important; border:1px solid #e0e6ef!important; border-radius:.5rem; color:#475467!important; background:#fff!important; box-shadow:none!important; font:500 .8rem 'Open Sans',sans-serif; cursor:pointer; }
+.admin-table-panel .dt-paging .dt-paging-button.current { border-color:#1a56db!important; color:#fff!important; background:#1a56db!important; }
+.admin-table-panel .dt-paging .dt-paging-button:is(:hover,:focus-visible):not(.disabled) { background:#1a56db!important; border-color:#1a56db!important; color:#fff!important; }
+.admin-table-panel .dt-paging .dt-paging-button.disabled { opacity:.45; cursor:default; }
+.admin-table-panel :is(.dt-input,.dt-paging-button):focus-visible { outline:3px solid #90b2ff; outline-offset:2px; }
+.admin-table-panel .dt-processing { border:1px solid #dfe6f0; border-radius:.7rem; background:#fff; box-shadow:0 4px 18px #1018281a; font-size:.85rem; }
+.admin-table-panel .dataTables_empty,.admin-table-panel .dt-empty { padding:2.5rem!important; color:#667085; text-align:center!important; }
+.admin-table-error { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin:1rem; padding:1rem; border:1px solid #f0c5c5; border-radius:.6rem; background:#fff3f3; color:#a12a2a; font-size:.8rem; }
+.admin-table-error[hidden] { display:none; }
+.admin-table-error button { flex-shrink:0; min-height:40px; padding:.5rem .75rem; border:1px solid #e1aaaa; border-radius:.5rem; background:#fff; color:#a12a2a; cursor:pointer; }
+.admin-table-panel .table-responsive { overflow-x:auto; }
+.admin-table-panel .dt-layout-table > .dt-layout-cell { overflow-x:auto; max-width:100%; }
+.admin-table-search label { flex-shrink:0; margin:0; font-size:.75rem; }
+@media (max-width:600px) {
+    .admin-table-panel .dt-layout-row:not(.dt-layout-table) { display:flex; flex-direction:column; align-items:flex-start; }
+    .admin-table-panel .dt-layout-cell { max-width:100%; }
+    .admin-table-panel .dt-paging { justify-content:flex-start; }
+    .admin-table-error { align-items:flex-start; flex-direction:column; }
+}
