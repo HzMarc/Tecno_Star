@@ -1,0 +1,21 @@
+# Configuracion local y secretos
+.env
+.env.*
+!.env.example
+
+# Archivos de ejecucion
+/storage/logs/*
+/storage/security/*
+/storage/backups/
+/storage/recovery/
+/public/uploads/products/*
+!/public/uploads/products/.htaccess
+/vendor/
+
+# Indices y caches locales de Graphify
+/graphify-out/cache/
+/graphify-out/.graphify_analysis.json
+/graphify-out/.graphify_extract.json
+/graphify-out/GRAPH_REPORT.md
+/graphify-out/graph.html
+/graphify-out/graph.json

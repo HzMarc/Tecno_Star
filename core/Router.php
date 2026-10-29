@@ -22,8 +22,8 @@ final class Router
         $handler = $this->routes[$method][$path] ?? null;
 
         if ($handler === null) {
-            http_response_code(404);
-            return 'Página no encontrada';
+            ErrorHandler::respond(404, 'Página no encontrada');
+            return '';
         }
 
         if (is_array($handler)) {

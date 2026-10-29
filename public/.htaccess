@@ -1,9 +1,18 @@
 RewriteEngine On
-RewriteBase /Tecno_Star/public/
+
+# Apache con mod_php: tampoco mostrar errores anteriores al bootstrap.
+<IfModule php_module>
+    php_flag display_errors Off
+    php_flag display_startup_errors Off
+    php_flag log_errors On
+    php_value upload_max_filesize 4M
+    php_value post_max_size 6M
+</IfModule>
 
 # No permite listar carpetas ni servir archivos de configuración.
 Options -Indexes
-RewriteRule ^(?:\.|.*\.(?:env|ini|log|sql|bak|backup))$ - [F,L,NC]
+RewriteRule (^|/)\. - [F,L]
+RewriteRule \.(?:env|ini|log|sql|bak|backup)$ - [F,L,NC]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

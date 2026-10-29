@@ -8,6 +8,14 @@ final class UserModel
     {
     }
 
+    public static function accountsEnabled(PDO $db):bool
+    {
+        static $cache=null;$cache??=new WeakMap();
+        if(!isset($cache[$db]))$cache[$db]=(bool)$db->query("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='tbusuarios' AND COLUMN_NAME='session_version'")->fetchColumn();
+        return $cache[$db];
+    }
+    private function permissionSql():string{return self::accountsEnabled($this->database)?'(SELECT pedidos FROM tbpersonalpermisos WHERE id_usuario=u.id_usuario)':'NULL';}
+
     public function existsByEmail(string $email): bool
     {
         $statement = $this->database->prepare(
@@ -21,12 +29,30 @@ final class UserModel
     public function findActiveByEmail(string $email): ?array
     {
         $statement = $this->database->prepare(
-            "SELECT id_usuario, id_rol, nombres, apellidos, correo, password_hash
-             FROM tbusuarios
-             WHERE correo = :correo AND estado = 'activo'
+            "SELECT u.*,r.nombre_rol,c.telefono,".$this->permissionSql()." AS permiso_pedidos
+             FROM tbusuarios u
+             INNER JOIN tbroles r ON r.id_rol = u.id_rol
+             LEFT JOIN tbclientes c ON c.id_usuario = u.id_usuario
+             WHERE u.correo = :correo AND u.estado = 'activo'
              LIMIT 1"
         );
         $statement->execute(['correo' => $email]);
+        $user = $statement->fetch();
+
+        return $user === false ? null : $user;
+    }
+
+    public function findActiveById(int $userId): ?array
+    {
+        $statement = $this->database->prepare(
+            "SELECT u.*,r.nombre_rol,c.telefono,".$this->permissionSql()." AS permiso_pedidos
+             FROM tbusuarios u
+             INNER JOIN tbroles r ON r.id_rol = u.id_rol
+             LEFT JOIN tbclientes c ON c.id_usuario = u.id_usuario
+             WHERE u.id_usuario = :id_usuario AND u.estado = 'activo'
+             LIMIT 1"
+        );
+        $statement->execute(['id_usuario' => $userId]);
         $user = $statement->fetch();
 
         return $user === false ? null : $user;
