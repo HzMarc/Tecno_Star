@@ -1,0 +1,18 @@
+/* La marca conserva su lugar al desplegar la navegación móvil. */
+@media (max-width: 991.98px) {
+    .store-navbar__brand { top: 2.25rem; }
+    .store-navbar .navbar-toggler {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        min-height: 44px;
+        padding: .45rem;
+        background: #fff;
+        color: #526176;
+    }
+    .store-navbar .navbar-toggler:focus-visible {
+        outline: 3px solid #2054dd55;
+        outline-offset: 2px;
+    }
+}

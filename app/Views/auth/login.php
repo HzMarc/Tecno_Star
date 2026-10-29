@@ -9,31 +9,33 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/Tecno_Star/public/assets/css/app.css">
+    <link rel="stylesheet" href="<?= app_url_html('/assets/css/app.css?v='.filemtime(BASE_PATH.'/public/assets/css/app.css')) ?>">
+    <link rel="stylesheet" href="<?= app_url_html('/assets/css/auth.css?v='.filemtime(BASE_PATH.'/public/assets/css/auth.css')) ?>">
 </head>
 <body class="auth-page auth-page--login">
     <main class="auth-container container-fluid">
         <div class="auth-layout">
             <aside class="auth-showcase" aria-label="Información de Tecno Star">
-                <a class="auth-showcase__brand" href="/Tecno_Star/public/" aria-label="Volver a la tienda Tecno Star">
-                    <img src="/Tecno_Star/public/assets/images/logo-tecno-star.png" alt="Tecno Star">
+                <a class="auth-showcase__brand" href="<?= app_url_html('/') ?>" aria-label="Volver a la tienda Tecno Star">
+                    <img src="<?= app_url_html('/assets/images/logo-tecno-star.png') ?>" alt="Tecno Star">
                 </a>
                 <div class="auth-showcase__art">
                     <div class="auth-art-card auth-art-card--one"><i class="bi bi-phone"></i></div>
                     <div class="auth-art-card auth-art-card--two"><i class="bi bi-headphones"></i></div>
                     <div class="auth-art-card auth-art-card--three"><i class="bi bi-printer"></i></div>
-                    <img src="/Tecno_Star/public/assets/images/logo-estrella.png" alt="" aria-hidden="true">
+                    <img src="<?= app_url_html('/assets/images/logo-estrella.png') ?>" alt="" aria-hidden="true">
                 </div>
                 <h2>Tu tecnología,<br><strong>más cerca.</strong></h2>
                 <p>Accesorios tecnológicos y servicios de papelería para todos los días.</p>
             </aside>
 
             <section class="auth-card auth-card--login" aria-labelledby="login-title">
-                <img class="auth-card__logo" src="/Tecno_Star/public/assets/images/logo-estrella.png" alt="">
+                <img class="auth-card__logo" src="<?= app_url_html('/assets/images/logo-estrella.png') ?>" alt="">
                 <h1 id="login-title">Iniciar sesión</h1>
                 <p class="auth-card__description">Accede a tu cuenta de Tecno Star.</p>
 
-                <form class="auth-form" data-auth-form method="post" action="/Tecno_Star/public/login" novalidate>
+                <form class="auth-form" data-auth-form method="post" action="<?= app_url_html('/login') ?>" novalidate>
+                    <?= Csrf::field() ?>
                     <div>
                         <label class="form-label" for="login-email">Correo electrónico</label>
                         <input class="form-control" id="login-email" name="email" type="email" autocomplete="email" required>
@@ -54,22 +56,15 @@
                     <button class="btn btn-primary w-100" type="submit">Iniciar sesión</button>
                 </form>
 
-                <div class="auth-divider"><span>o continúa con</span></div>
-                <a class="google-button btn btn-outline-secondary" href="/Tecno_Star/public/auth/google">
-                    <svg class="google-button__icon" viewBox="0 0 24 24" aria-hidden="true">
-                        <path fill="#4285F4" d="M21.35 12.23c0-.72-.06-1.42-.18-2.09H12v3.96h5.24a4.48 4.48 0 0 1-1.94 2.94v2.45h3.14c1.84-1.69 2.91-4.18 2.91-7.26Z"/>
-                        <path fill="#34A853" d="M12 21.5c2.63 0 4.84-.87 6.45-2.36l-3.14-2.45c-.87.58-1.98.92-3.31.92-2.54 0-4.7-1.72-5.47-4.03H3.29v2.53A9.74 9.74 0 0 0 12 21.5Z"/>
-                        <path fill="#FBBC05" d="M6.53 13.58a5.85 5.85 0 0 1 0-3.16V7.89H3.29a9.5 9.5 0 0 0 0 8.22l3.24-2.53Z"/>
-                        <path fill="#EA4335" d="M12 6.39c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.84 3.48 14.63 2.5 12 2.5a9.74 9.74 0 0 0-8.71 5.39l3.24 2.53C7.3 8.11 9.46 6.39 12 6.39Z"/>
-                    </svg>
-                    Continuar con Google
-                </a>
+                <?php require BASE_PATH . '/app/Views/auth/google-button.php'; ?>
+
+                <a class="auth-back-link" href="<?= app_url_html('/forgot-password') ?>">¿Olvidaste tu contraseña?</a>
 
                 <p class="auth-card__footer">
                     ¿No tienes una cuenta?
-                    <a href="/Tecno_Star/public/register">Registrarse</a>
+                    <a href="<?= app_url_html('/register') ?>">Registrarse</a>
                 </p>
-                <a class="auth-back-link" href="/Tecno_Star/public/">
+                <a class="auth-back-link" href="<?= app_url_html('/') ?>">
                     <i class="bi bi-arrow-left" aria-hidden="true"></i> Volver al inicio
                 </a>
             </section>
@@ -92,7 +87,8 @@
             data-message-type="<?= htmlspecialchars($messageType, ENT_QUOTES, 'UTF-8') ?>"
         ></div>
     <?php endif; ?>
-    <script src="/Tecno_Star/public/assets/js/app.js"></script>
+    <script src="<?= app_url_html('/assets/js/app.js') ?>"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+<link rel="stylesheet" href="<?= app_url_html('/assets/css/accounts.css') ?>"><script defer src="<?= app_url_html('/assets/js/commerce.js?v='.filemtime(BASE_PATH.'/public/assets/js/commerce.js')) ?>"></script><div class="order-toasts" data-commerce-toasts role="status" aria-live="polite"></div></body>
 </html>
+

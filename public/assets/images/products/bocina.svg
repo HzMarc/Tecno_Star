@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360">
+  <rect width="480" height="360" rx="28" fill="#f1f5ff"/>
+  <rect x="145" y="48" width="190" height="260" rx="34" fill="#111827"/>
+  <circle cx="240" cy="142" r="54" fill="#4382f4"/>
+  <circle cx="240" cy="142" r="24" fill="#111827"/>
+  <circle cx="240" cy="242" r="30" fill="#1a56db"/>
+  <text x="240" y="345" text-anchor="middle" font-family="Arial" font-size="22" font-weight="700" fill="#1a56db">BOCINA</text>
+</svg>

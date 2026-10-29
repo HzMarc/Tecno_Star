@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360">
+  <rect width="480" height="360" rx="28" fill="#f5f7fa"/>
+  <path d="M130 105v100c0 55 45 100 100 100s100-45 100-100v-55" fill="none" stroke="#1a56db" stroke-width="28" stroke-linecap="round"/>
+  <rect x="285" y="65" width="58" height="82" rx="10" fill="#111827"/>
+  <rect x="293" y="52" width="42" height="20" rx="4" fill="#9ca3af"/>
+  <rect x="102" y="78" width="56" height="80" rx="10" fill="#111827"/>
+  <text x="240" y="345" text-anchor="middle" font-family="Arial" font-size="22" font-weight="700" fill="#1a56db">CABLE USB</text>
+</svg>

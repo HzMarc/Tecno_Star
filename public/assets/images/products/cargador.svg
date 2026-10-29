@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360">
+  <rect width="480" height="360" rx="28" fill="#f1f5ff"/>
+  <rect x="145" y="62" width="190" height="236" rx="24" fill="#1a56db"/>
+  <rect x="177" y="92" width="126" height="110" rx="14" fill="#fff"/>
+  <path d="M250 112 218 163h29l-17 42 36-55h-29z" fill="#1a56db"/>
+  <rect x="196" y="220" width="108" height="16" rx="8" fill="#dbe6ff"/>
+  <text x="240" y="330" text-anchor="middle" font-family="Arial" font-size="22" font-weight="700" fill="#1a56db">CARGADOR</text>
+</svg>

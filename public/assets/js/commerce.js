@@ -1,0 +1,27 @@
+(() => {
+    const toast=document.querySelector('[data-commerce-toasts]');
+    const notify=text=>{if(!toast)return;const item=document.createElement('div');item.className='order-toast';item.textContent=text;toast.replaceChildren(item);setTimeout(()=>item.remove(),5500);};
+    const flash=sessionStorage.getItem('tecno-commerce-flash');if(flash){sessionStorage.removeItem('tecno-commerce-flash');notify(flash);}
+    document.addEventListener('commerce:summary',event=>{const money=value=>'$'+Number(value).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});const paid=document.querySelector('[data-sales-paid]'),voided=document.querySelector('[data-sales-voided]');if(paid)paid.textContent=money(event.detail.paid);if(voided)voided.textContent=money(event.detail.voided);});
+    document.querySelectorAll('[data-commerce-open]').forEach(button=>button.addEventListener('click',()=>document.getElementById(button.dataset.commerceOpen)?.showModal()));
+    document.querySelectorAll('[data-commerce-close]').forEach(button=>button.addEventListener('click',()=>button.closest('dialog')?.close()));
+    document.querySelectorAll('[data-commerce-form]').forEach(form=>{
+        let busy=false;form.addEventListener('submit',async event=>{
+            event.preventDefault();if(busy || !form.reportValidity())return;busy=true;const submit=form.querySelector('[type=submit]'),error=form.querySelector('[data-commerce-error]');submit.dataset.loadingLabel=submit.innerHTML;submit.innerHTML='<span class="order-loading-spinner" aria-hidden="true"></span><span>Guardando…</span>';submit.disabled=true;error.hidden=true;
+            const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),20000);
+            try{const response=await fetch(form.action,{method:'POST',credentials:'same-origin',headers:{Accept:'application/json'},body:new FormData(form),signal:controller.signal});const result=await response.json();if(!response.ok || !result.ok)throw new Error(result.error||'No se pudo guardar.');
+                form.querySelectorAll('[type=password]').forEach(field=>field.value='');if(form.hasAttribute('data-user-form')){form.closest('dialog')?.close();document.dispatchEvent(new CustomEvent('admin:reload-tables'));notify(result.message);}else if(result.location){sessionStorage.setItem('tecno-commerce-flash',result.message);location.assign(result.location);}else notify(result.message);
+            }catch(failure){error.textContent=failure.name==='AbortError'?'No se pudo confirmar la respuesta. Reintenta sin cambiar los datos; no se duplica la operación.':failure.message;error.hidden=false;}
+            finally{clearTimeout(timer);busy=false;submit.disabled=false;if(submit.dataset.loadingLabel)submit.innerHTML=submit.dataset.loadingLabel;}
+        });form.closest('dialog')?.addEventListener('cancel',event=>{if(busy)event.preventDefault();});
+    });
+    const userModal=document.querySelector('[data-user-modal]'),userForm=document.querySelector('[data-user-form]');
+    const permission=()=>{if(userForm){const employee=userForm.elements.rol.value==='Empleado';userForm.elements.pedidos.disabled=!employee;const row=userForm.querySelector('[data-user-permission]');if(row)row.hidden=!employee;}};userForm?.elements.rol.addEventListener('change',permission);userModal?.addEventListener('toggle',permission);
+    const prepare=()=>{userForm.reset();userForm.elements.id.value='';userForm.elements.revision.value='';userForm.querySelector('[data-commerce-error]').hidden=true;permission();};
+    document.querySelector('[data-user-new]')?.addEventListener('click',()=>{prepare();userForm.elements.correo.readOnly=false;userForm.querySelector('[data-user-password]').hidden=false;['nueva','confirmacion'].forEach(name=>userForm.elements[name].required=true);userModal.querySelector('h2').textContent='Nuevo usuario';permission();userModal.showModal();});
+    document.addEventListener('click',async event=>{const button=event.target.closest('[data-user-edit]');if(!button || !userForm)return;button.disabled=true;
+        try{const response=await fetch(userForm.dataset.editorUrl+'?id='+encodeURIComponent(button.dataset.userEdit),{headers:{Accept:'application/json'},credentials:'same-origin'});const result=await response.json();if(!response.ok)throw new Error(result.error||'No se pudo abrir la cuenta.');prepare();const user=result.user;for(const name of ['nombres','apellidos','telefono','correo','estado'])userForm.elements[name].value=user[name]||'';userForm.elements.id.value=user.id_usuario;userForm.elements.revision.value=user.cuenta_revision;userForm.elements.rol.value=user.nombre_rol;userForm.elements.pedidos.checked=user.pedidos==='1';userForm.elements.correo.readOnly=true;userForm.querySelector('[data-user-password]').hidden=true;['nueva','confirmacion'].forEach(name=>userForm.elements[name].required=false);userModal.querySelector('h2').textContent='Editar usuario';permission();userModal.showModal();}catch(failure){notify(failure.message);}finally{button.disabled=false;}
+    });
+    const received=document.querySelector('[data-cash-received]'),change=document.querySelector('[data-cash-change]');
+    received?.addEventListener('input',()=>{const total=Math.round(Number(received.dataset.total)*100),cash=Math.round(Number(received.value)*100);change.textContent=Number.isFinite(cash)&&cash>=total?'$'+((cash-total)/100).toFixed(2):'Importe insuficiente';});
+})();

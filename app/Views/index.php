@@ -7,17 +7,19 @@
     <title><?= htmlspecialchars(APP_NAME, ENT_QUOTES, 'UTF-8') ?> | Tecnología y papelería</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&family=Playfair+Display:wght@700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/Tecno_Star/public/assets/css/app.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
+    <link rel="stylesheet" href="<?= app_url_html('/assets/css/app.css?v='.filemtime(BASE_PATH.'/public/assets/css/app.css')) ?>">
 </head>
 <body>
     <header class="store-header">
         <nav class="navbar navbar-expand-lg bg-white">
             <div class="container">
-                <a class="navbar-brand store-brand" href="/Tecno_Star/public/" aria-label="Ir al inicio de Tecno Star">
-                    <img src="/Tecno_Star/public/assets/images/logo-tecno-star.png" alt="Tecno Star">
+                <a class="navbar-brand store-brand" href="<?= app_url_html('/') ?>" aria-label="Ir al inicio de Tecno Star">
+                    <img src="<?= app_url_html('/assets/images/logo-tecno-star.png') ?>" alt="Tecno Star">
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#store-navigation" aria-controls="store-navigation" aria-expanded="false" aria-label="Abrir menú">
@@ -33,8 +35,13 @@
                         <li class="nav-item"><a class="nav-link" href="#nosotros">Nosotros</a></li>
                     </ul>
                     <div class="d-flex gap-2">
-                        <a class="btn btn-outline-primary btn-sm" href="/Tecno_Star/public/login">Iniciar sesión</a>
-                        <a class="btn btn-primary btn-sm" href="/Tecno_Star/public/register">Crear cuenta</a>
+                        <?php if(!empty($_SESSION['user'])): ?>
+                        <a class="btn btn-outline-primary btn-sm" href="<?= app_url_html('/profile') ?>">Mi cuenta</a>
+                        <a class="btn btn-primary btn-sm" href="<?= app_url_html('/store') ?>">Ir a la tienda</a>
+                        <?php else: ?>
+                        <a class="btn btn-outline-primary btn-sm" href="<?= app_url_html('/login') ?>">Iniciar sesión</a>
+                        <a class="btn btn-primary btn-sm" href="<?= app_url_html('/register') ?>">Crear cuenta</a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -53,7 +60,7 @@
                             Consulta nuestro catálogo y realiza tu pedido para retirarlo en tienda.
                         </p>
                         <div class="d-flex flex-wrap gap-3">
-                            <a class="btn btn-primary btn-lg" href="/Tecno_Star/public/store">
+                            <a class="btn btn-primary btn-lg" href="<?= app_url_html('/store') ?>">
                                 Explorar catálogo <i class="bi bi-arrow-right ms-1"></i>
                             </a>
                             <a class="btn btn-light btn-lg border" href="#servicios">Ver servicios</a>
@@ -67,7 +74,7 @@
                     <div class="col-lg-5">
                         <div class="hero-visual">
                             <div class="hero-visual__glow"></div>
-                            <img src="/Tecno_Star/public/assets/images/logo-estrella.png" alt="" aria-hidden="true">
+                            <img src="<?= app_url_html('/assets/images/logo-estrella.png') ?>" alt="" aria-hidden="true">
                             <span class="hero-visual__caption">Tu tecnología,<br><strong>más cerca.</strong></span>
                         </div>
                     </div>
@@ -222,36 +229,18 @@
                         <span class="eyebrow eyebrow--light">Empieza hoy</span>
                         <h2>Conoce Tecno Star y encuentra tu próxima solución.</h2>
                     </div>
-                    <a class="btn btn-light btn-lg" href="/Tecno_Star/public/register">Crear mi cuenta <i class="bi bi-arrow-right ms-1"></i></a>
+                    <a class="btn btn-light btn-lg" href="<?= app_url_html('/register') ?>">Crear mi cuenta <i class="bi bi-arrow-right ms-1"></i></a>
                 </div>
             </div>
         </section>
     </main>
 
-    <footer class="store-footer">
-        <div class="container">
-            <div class="row gy-4 align-items-center">
-                <div class="col-md-4">
-                    <img class="store-footer__logo" src="/Tecno_Star/public/assets/images/logo-tecno-star.png" alt="Tecno Star">
-                    <p class="store-footer__description">Accesorios tecnológicos y servicios de papelería.</p>
-                </div>
-                <div class="col-md-4">
-                    <p class="store-footer__description">Tecnología, accesorios y papelería para todos los días.</p>
-                </div>
-                <div class="col-md-4 text-md-end">
-                    <p class="store-footer__copyright">
-                        &copy; <?= date('Y') ?> Tecno Star.<br>
-                        Todos los derechos reservados.
-                    </p>
-                    <p class="store-footer__developer">
-                        Desarrollado por <strong>Black Rose Systems</strong>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <?php require BASE_PATH . '/app/Views/store/partials/footer.php'; ?>
 
-    <script src="/Tecno_Star/public/assets/js/app.js"></script>
+    <script src="<?= app_url_html('/assets/js/app.js') ?>"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script defer src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script defer src="<?= app_url_html('/assets/js/animations.js?v='.filemtime(BASE_PATH.'/public/assets/js/animations.js')) ?>"></script>
 </body>
 </html>

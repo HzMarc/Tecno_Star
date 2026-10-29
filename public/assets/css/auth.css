@@ -1,0 +1,13 @@
+.auth-page .password-toggle{display:inline-flex;align-items:center;justify-content:center;min-width:44px;padding:0 .65rem;line-height:1}
+.auth-google-divider{display:flex;align-items:center;gap:12px;color:#68717b;margin:18px 0}
+.auth-google-divider::before,.auth-google-divider::after{content:"";height:1px;background:#dadce0;flex:1}
+.auth-google-button{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:44px;padding:10px 14px;border:1px solid #747775;border-radius:6px;background:#fff;color:#1f1f1f;text-decoration:none;font-family:Arial,sans-serif;font-size:14px;font-weight:500}
+.auth-google-button:hover{background:#f8fafd;color:#1f1f1f;box-shadow:0 1px 3px #0002}
+.auth-google-button:focus-visible{outline:3px solid #4285f4;outline-offset:3px}
+.auth-page .auth-google-complete{width:min(100%,480px);margin:auto}
+@media(max-width:767.98px){
+    .auth-page--login .auth-showcase,.auth-page--register .auth-showcase{display:none}
+    .auth-page .auth-layout{display:block;width:min(100%,440px);min-height:0}
+    .auth-page .auth-card{padding:24px 20px}
+    .auth-page .auth-container{padding:16px}
+}

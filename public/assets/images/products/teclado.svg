@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360">
+  <rect width="480" height="360" rx="28" fill="#f0f4ff"/>
+  <rect x="62" y="78" width="356" height="190" rx="18" fill="#111827"/>
+  <g fill="#4382f4">
+    <rect x="86" y="104" width="38" height="30" rx="5"/><rect x="134" y="104" width="38" height="30" rx="5"/><rect x="182" y="104" width="38" height="30" rx="5"/><rect x="230" y="104" width="38" height="30" rx="5"/><rect x="278" y="104" width="38" height="30" rx="5"/><rect x="326" y="104" width="38" height="30" rx="5"/>
+    <rect x="86" y="146" width="38" height="30" rx="5"/><rect x="134" y="146" width="38" height="30" rx="5"/><rect x="182" y="146" width="38" height="30" rx="5"/><rect x="230" y="146" width="38" height="30" rx="5"/><rect x="278" y="146" width="38" height="30" rx="5"/><rect x="326" y="146" width="38" height="30" rx="5"/>
+    <rect x="86" y="188" width="86" height="30" rx="5"/><rect x="182" y="188" width="134" height="30" rx="5"/><rect x="326" y="188" width="38" height="30" rx="5"/>
+  </g>
+  <text x="240" y="330" text-anchor="middle" font-family="Arial" font-size="22" font-weight="700" fill="#1a56db">GAMING</text>
+</svg>

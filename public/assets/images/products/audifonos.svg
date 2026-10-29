@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360">
+  <rect width="480" height="360" rx="28" fill="#eef4ff"/>
+  <path d="M130 190v-42c0-62 49-112 110-112s110 50 110 112v42h-36v-42c0-42-33-76-74-76s-74 34-74 76v42z" fill="#111827"/>
+  <rect x="118" y="174" width="60" height="106" rx="28" fill="#1a56db"/>
+  <rect x="302" y="174" width="60" height="106" rx="28" fill="#1a56db"/>
+  <text x="240" y="330" text-anchor="middle" font-family="Arial" font-size="22" font-weight="700" fill="#1a56db">AUDIO</text>
+</svg>
