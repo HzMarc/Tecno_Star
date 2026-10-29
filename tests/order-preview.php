@@ -1,0 +1,4 @@
+<?php
+declare(strict_types=1);
+require_once dirname(__DIR__).'/database/cli.php';require_once BASE_PATH.'/app/Models/ShoppingModel.php';
+try{$options=migrationOptions();if(!preg_match('/^tecno_star_test_catalog_[a-zA-Z0-9_]{1,16}$/D',$options['database']))throw new RuntimeException('Solo base sintética.');$db=migrationConnection($options);$id=(int)$db->query("SELECT id_usuario FROM tbusuarios WHERE correo='admin@catalog.example.test'")->fetchColumn();$product=(int)$db->query("SELECT id_producto FROM tbproductos WHERE codigo_producto='CAT-001'")->fetchColumn();if(!$id || !$product)throw new RuntimeException('Falta fixture.');(new ShoppingModel($db))->mutate($id,['action'=>'cart_add','product_id'=>$product,'quantity'=>2]);echo "Carrito sintético preparado para revisar checkout.\n";}catch(Throwable $error){fwrite(STDERR,$error->getMessage()."\n");exit(1);}

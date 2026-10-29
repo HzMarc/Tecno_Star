@@ -1,0 +1,12 @@
+{
+    "require": {
+        "php": "^8.2",
+        "ext-gd": "*",
+        "phpmailer/phpmailer": "^7.0",
+        "endroid/qr-code": "^5.0",
+        "google/apiclient": "^2.20"
+    },
+    "require-dev": {
+        "khanamiryan/qrcode-detector-decoder": "^2.0"
+    }
+}

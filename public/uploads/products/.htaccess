@@ -1,0 +1,11 @@
+Options -Indexes -ExecCGI
+RemoveHandler .jpg .png .webp
+<IfModule php_module>
+    php_flag engine Off
+</IfModule>
+<FilesMatch "(?i)\.(?!jpg$|png$|webp$)[^.]+$">
+    Require all denied
+</FilesMatch>
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+</IfModule>
