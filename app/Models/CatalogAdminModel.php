@@ -125,6 +125,8 @@ final class CatalogAdminModel
 
     public function save(array $data, ?int $id, ?string $image, bool $removeImage = false): int
     {
+        // Es un dato del formulario; la imagen resuelta llega por separado.
+        unset($data['imagen_url']);
         $this->database->beginTransaction();
         try {
             if ($id !== null) {
@@ -169,7 +171,7 @@ final class CatalogAdminModel
         } catch (Throwable $exception) { $this->database->rollBack(); throw $exception; }
     }
 
-    public function saveEntity(string $kind, ?int $id, string $name, string $state): void
+    public function saveEntity(string $kind, ?int $id, string $name, string $state): int
     {
         [$table, $idColumn, $nameColumn] = self::entity($kind);
         $name = trim($name);
@@ -186,5 +188,6 @@ final class CatalogAdminModel
             if ((int) ($exception->errorInfo[1] ?? 0) === 1062) throw new CatalogValidationException(['name' => 'Ese nombre ya está registrado. Puedes reactivar el registro existente.']);
             throw $exception;
         }
+        return $id ?? (int) $this->database->lastInsertId();
     }
 }

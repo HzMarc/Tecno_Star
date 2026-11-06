@@ -13,7 +13,7 @@ $googleValue = static function (string $key) use ($identity, $escapeGoogle): str
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?= app_url_html('/assets/css/app.css?v=' . filemtime(BASE_PATH . '/public/assets/css/app.css')) ?>">
     <link rel="stylesheet" href="<?= app_url_html('/assets/css/auth.css?v=' . filemtime(BASE_PATH . '/public/assets/css/auth.css')) ?>">
-</head>
+<?php require_once BASE_PATH . '/app/Views/partials/help-assets.php'; ?></head>
 <body class="auth-page auth-page--google">
 <main class="auth-container container-fluid">
     <section class="auth-card auth-google-complete" aria-labelledby="google-title">

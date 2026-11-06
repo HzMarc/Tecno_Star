@@ -3,12 +3,12 @@ declare(strict_types=1);
 require_once BASE_PATH.'/app/Models/SaleModel.php';
 final class SaleController
 {
-    public static function available():bool{if(OrderModel::cashEnabled(Database::connection()))return true;ErrorHandler::respond(503,'El Plan 7 está pendiente de activación.');return false;}
+    public static function available():bool{if(OrderModel::cashEnabled(Database::connection()))return true;ErrorHandler::respond(503,'Ventas está pendiente de activación.');return false;}
     public function index():void{$this->listing(false);}
     public function purchases():void{$this->listing(true);}
     private function listing(bool $own):void
     {
-        $user=Auth::requireUser();if(!$user || !self::available())return;$staff=OrderModel::isStaff($user);if(!$own && !$staff){ErrorHandler::respond(403,'No tienes permiso de caja.');return;}
+        $user=Auth::requireUser();if(!$user || !self::available())return;$staff=OrderModel::isStaff($user) || ServiceModel::staff(Database::connection(),(int)$user['id_usuario']);if(!$own && !$staff){ErrorHandler::respond(403,'No tienes permiso de caja.');return;}
         $kind=$own?'purchases':'sales';$admin=!$own && $user['nombre_rol']==='Administrador';$title=$own?'Mis compras':'Ventas en efectivo';
         if($own){
             try{$cards=(new SaleModel(Database::connection()))->purchaseCards((int)$user['id_usuario'],$_GET);}
@@ -19,6 +19,11 @@ final class SaleController
     }
     public function detail():void
     {
+        $account=Auth::requireUser();if(!$account || !self::available())return;
+        if(ServiceModel::installed(Database::connection())){
+            $id=filter_var($_GET['id']??null,FILTER_VALIDATE_INT);$q=Database::connection()->prepare('SELECT id_solicitud_servicio FROM tbventas WHERE id_venta=?');$q->execute([$id?:0]);$service=$q->fetchColumn();
+            if($service){$record=(new ServiceModel(Database::connection()))->find((int)$service,(int)$account['id_usuario'],ServiceModel::staff(Database::connection(),(int)$account['id_usuario']));if(!$record){ErrorHandler::respond(404,'Venta no encontrada.');return;}header('Location: '.app_url('/services/detail?id='.(int)$service));return;}
+        }
         if(!($user=Auth::requireUser()) || !self::available())return;$staff=OrderModel::isStaff($user);$id=filter_var($_GET['id']??null,FILTER_VALIDATE_INT);$sale=$id?(new SaleModel(Database::connection()))->find($id,(int)$user['id_usuario'],$staff):null;if(!$sale){ErrorHandler::respond(404,'Venta no encontrada.');return;}$admin=$user['nombre_rol']==='Administrador';$reinvestment=$admin && ReinvestmentModel::enabled(Database::connection())?(new ReinvestmentModel(Database::connection()))->forSale((int)$id):null;require BASE_PATH.'/app/Views/commerce/sale.php';
     }
     public function pay():void{$this->write(false);}

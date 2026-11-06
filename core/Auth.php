@@ -52,6 +52,7 @@ final class Auth
             'email' => $user['correo'],
             'credential_tag'=>hash('sha256',$user['password_hash'].'|'.($user['session_version']??0)),
             'permiso_pedidos'=>$user['permiso_pedidos']??null,
+            'permiso_servicios'=>$user['permiso_servicios']??null,
         ];
     }
 

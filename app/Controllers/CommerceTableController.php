@@ -7,7 +7,9 @@ final class CommerceTableController
     {
         $_SERVER['HTTP_ACCEPT']='application/json';if(!($user=Auth::requireUser(true)) || !SaleController::available())return;$kind=$_GET['kind']??'';
         if(!is_string($kind) || !in_array($kind,['sales','purchases','users'],true)){ErrorHandler::respond(422,'Tabla inválida.');return;}
-        if(($kind==='users' && $user['nombre_rol']!=='Administrador') || ($kind==='sales' && !OrderModel::isStaff($user))){ErrorHandler::respond(403,'No tienes permiso para consultar esta tabla.');return;}
+        $productStaff=OrderModel::isStaff($user);$serviceStaff=ServiceModel::staff(Database::connection(),(int)$user['id_usuario']);
+        if(($kind==='users' && $user['nombre_rol']!=='Administrador') || ($kind==='sales' && !$productStaff && !$serviceStaff)){ErrorHandler::respond(403,'No tienes permiso para consultar esta tabla.');return;}
+        unset($_GET['_origin']);if($kind==='sales' && !($productStaff && $serviceStaff))$_GET['_origin']=$productStaff?'producto':'servicio';
         try{$result=(new AdminTableModel(Database::connection()))->data($kind,$_GET,$kind==='purchases'?(int)$user['id_usuario']:null);$result['data']=array_map(static fn($row)=>AdminTableRows::cells($kind,$row),$result['rows']);unset($result['rows']);header('Content-Type: application/json; charset=utf-8');echo json_encode($result,JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE);}catch(InvalidArgumentException $error){ErrorHandler::respond(422,$error->getMessage());}
     }
 }

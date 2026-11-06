@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
     <link rel="stylesheet" href="<?= app_url_html('/assets/css/app.css?v='.filemtime(BASE_PATH.'/public/assets/css/app.css')) ?>">
-</head>
+<?php require_once BASE_PATH . '/app/Views/partials/help-assets.php'; ?></head>
 <body>
     <header class="store-header">
         <nav class="navbar navbar-expand-lg bg-white">
@@ -30,7 +30,7 @@
                     <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
                         <li class="nav-item"><a class="nav-link active" href="#inicio">Inicio</a></li>
                         <li class="nav-item"><a class="nav-link" href="#categorias">Categorías</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#servicios">Servicios</a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?= app_url_html('/services') ?>">Servicios</a></li>
                         <li class="nav-item"><a class="nav-link" href="#como-funciona">Cómo funciona</a></li>
                         <li class="nav-item"><a class="nav-link" href="#nosotros">Nosotros</a></li>
                     </ul>
@@ -63,7 +63,7 @@
                             <a class="btn btn-primary btn-lg" href="<?= app_url_html('/store') ?>">
                                 Explorar catálogo <i class="bi bi-arrow-right ms-1"></i>
                             </a>
-                            <a class="btn btn-light btn-lg border" href="#servicios">Ver servicios</a>
+                            <a class="btn btn-light btn-lg border" href="<?= app_url_html('/services') ?>">Ver servicios</a>
                         </div>
                         <div class="hero-highlights">
                             <span><i class="bi bi-check-circle-fill"></i> Catálogo actualizado</span>
@@ -119,7 +119,7 @@
                             <div class="category-card__icon"><i class="bi bi-printer"></i></div>
                             <h3>Papelería</h3>
                             <p>Materiales y servicios para tus tareas, proyectos y documentos.</p>
-                            <a href="#servicios">Ver servicios <i class="bi bi-arrow-right"></i></a>
+                            <a href="<?= app_url_html('/services') ?>">Ver servicios <i class="bi bi-arrow-right"></i></a>
                         </article>
                     </div>
                 </div>

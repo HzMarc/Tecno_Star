@@ -69,7 +69,7 @@ $newProductIds = array_map(static fn (array $item): int => (int) $item['id'], $r
                     <?php if ($catalogError): ?>
                         <div class="store-empty" role="alert"><span class="store-empty__icon"><i class="bi bi-wifi-off" aria-hidden="true"></i></span><h3>No pudimos cargar el catálogo</h3><p>Intenta nuevamente en un momento. Tus productos guardados siguen vinculados a tu cuenta.</p><a class="store-empty__action" href="<?= app_url_html('/store') ?>">Volver a cargar <i class="bi bi-arrow-clockwise" aria-hidden="true"></i></a></div>
                     <?php elseif ($products === []): ?>
-                        <div class="store-empty"><span class="store-empty__icon"><i class="bi bi-box-seam" aria-hidden="true"></i></span><h3>No hay productos disponibles por ahora</h3><p>Vuelve más tarde para consultar las existencias o conoce nuestros servicios.</p><a class="store-empty__action" href="<?= app_url_html('/#servicios') ?>">Conocer servicios <i class="bi bi-arrow-right" aria-hidden="true"></i></a></div>
+                        <div class="store-empty"><span class="store-empty__icon"><i class="bi bi-box-seam" aria-hidden="true"></i></span><h3>No hay productos disponibles por ahora</h3><p>Vuelve más tarde para consultar las existencias o conoce nuestros servicios.</p><a class="store-empty__action" href="<?= app_url_html('/services') ?>">Conocer servicios <i class="bi bi-arrow-right" aria-hidden="true"></i></a></div>
                     <?php else: ?>
                         <div class="store-product-grid" data-catalog-grid>
                             <?php foreach ($products as $productIndex => $product): ?><?php require BASE_PATH . '/app/Views/store/partials/product-card.php'; ?><?php endforeach; ?>
@@ -77,7 +77,7 @@ $newProductIds = array_map(static fn (array $item): int => (int) $item['id'], $r
                         <div class="store-empty" data-catalog-empty hidden><span class="store-empty__icon"><i class="bi bi-search" aria-hidden="true"></i></span><h3>No encontramos coincidencias</h3><p>Prueba con otra palabra, cambia de categoría o quita los filtros.</p><button class="store-empty__action" type="button" data-clear-catalog>Ver todos los productos <i class="bi bi-arrow-right" aria-hidden="true"></i></button></div>
                     <?php endif; ?>
                 </section>
-                <aside class="store-service-note" aria-label="Otros servicios"><i class="bi bi-printer" aria-hidden="true"></i><p><strong>También estamos para tus ideas.</strong> Copias, impresiones y servicios de papelería en nuestra tienda.</p><a href="<?= app_url_html('/#servicios') ?>">Conocer servicios <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></aside>
+                <aside class="store-service-note" aria-label="Otros servicios"><i class="bi bi-printer" aria-hidden="true"></i><p><strong>También estamos para tus ideas.</strong> Copias, impresiones y servicios de papelería en nuestra tienda.</p><a href="<?= app_url_html('/services') ?>">Conocer servicios <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></aside>
             </div>
         </div>
     </div>

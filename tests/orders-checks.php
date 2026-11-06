@@ -79,7 +79,7 @@ $decoded=(new Zxing\QrReader($qrFile))->text();
 catalogCheck(str_starts_with($png,"\x89PNG") && $decoded===OrderMail::url($mailOrder['codigo_pedido']),'imagen QR decodificada contiene el enlace con el código exacto del pedido');
 $sent=0;$mailer=new OrderMail($runtime,static function($message) use(&$sent,$mailOrder):void {
     $sent++;$message->preSend();
-    catalogCheck($message->getToAddresses()[0][0]==='client@catalog.example.test' && str_contains($message->Body,$mailOrder['codigo_pedido']) && str_contains($message->Body,'cid:pedido-qr') && str_contains($message->AltBody,$mailOrder['total']) && str_contains($message->getSentMIMEMessage(),'image/png'),'correo contiene destinatario, productos, total, código y QR incrustado');
+    catalogCheck($message->getToAddresses()[0][0]==='client@catalog.example.test' && str_contains($message->Body,$mailOrder['codigo_pedido']) && !str_contains($message->Body,'cid:pedido-qr') && str_contains($message->AltBody,$mailOrder['total']) && str_contains($message->getSentMIMEMessage(),'image/png'),'confirmación contiene destinatario, productos y total, sin QR de retiro');
 });
 catalogCheck($mailer->sendOne($mailId)==='enviado' && $mailer->sendOne($mailId)==='none' && $sent===1,'reintentar correo confirmado no duplica envío');
 [$status]=catalogRequest('/orders/scan?codigo='.$mailOrder['codigo_pedido'],$cookie);catalogCheck($status===302,'QR abre el detalle para administrador');

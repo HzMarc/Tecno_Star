@@ -98,15 +98,28 @@ final class CatalogAdminController
     public function saveEntity(): void
     {
         if (!$this->authorize()) return;
+        $json = str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json');
         try {
             $kind = $_POST['kind'] ?? '';
             if (!is_string($kind) || !in_array($kind, ['categories','brands'], true)) throw new CatalogValidationException(['form'=>'Catálogo inválido.']);
             $name = $_POST['name'] ?? null; $state = $_POST['estado'] ?? null;
             if (!is_string($name) || !is_string($state)) throw new CatalogValidationException(['name'=>'Introduce un nombre y estado válidos.']);
             $id = $this->id($_POST['id'] ?? null);
-            $this->model()->saveEntity($kind, $id, $name, $state);
+            $savedId = $this->model()->saveEntity($kind, $id, $name, $state);
+            if ($json) {
+                http_response_code($id === null ? 201 : 200);
+                header('Content-Type: application/json; charset=utf-8');
+                echo json_encode(['ok'=>true,'option'=>['id'=>$savedId,'name'=>trim($name),'estado'=>$state],
+                    'message'=>($kind === 'categories' ? 'Categoría' : 'Marca') . ($id === null ? ' creada.' : ' actualizada.')], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+                return;
+            }
             $this->redirect('/admin/catalog?kind=' . $kind, ($kind === 'categories' ? 'Categoría' : 'Marca') . ($id === null ? ' creada.' : ' actualizada.'));
         } catch (CatalogValidationException $exception) {
+            if ($json) {
+                http_response_code(422); header('Content-Type: application/json; charset=utf-8');
+                echo json_encode(['ok'=>false,'errors'=>$exception->errors,'error'=>implode(' ', $exception->errors)], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+                return;
+            }
             http_response_code(422); $this->renderEntities($exception->errors, array_filter($_POST, 'is_string'));
         }
     }

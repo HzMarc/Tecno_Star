@@ -52,7 +52,7 @@ final class AccountModel
     public function save(int $actor,?int $id,array $input):int
     {
         $fields=$this->fields($input);$role=$input['rol']??null;$status=$input['estado']??null;
-        if(!in_array($role,['Administrador','Empleado','Cliente'],true) || !in_array($status,['activo','inactivo'],true) || !in_array($input['pedidos']??'0',['0','1'],true))throw new InvalidArgumentException('Rol, estado o permiso inválido.');
+        if(!in_array($role,['Administrador','Empleado','Cliente'],true) || !in_array($status,['activo','inactivo'],true) || !in_array($input['pedidos']??'0',['0','1'],true) || !in_array($input['servicios']??'0',['0','1'],true))throw new InvalidArgumentException('Rol, estado o permiso inválido.');
         $email=$input['correo']??'';$password=null;
         if($id===null){if(!is_string($email) || strlen($email)>150 || !filter_var($email,FILTER_VALIDATE_EMAIL))throw new InvalidArgumentException('Correo inválido.');$password=self::password($input['nueva']??null,$input['confirmacion']??null);}
         $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');$this->db->beginTransaction();
@@ -69,6 +69,7 @@ final class AccountModel
             }
             $this->contact($id,$fields,$email);$permission=$role==='Empleado' && ($input['pedidos']??'0')==='1'?1:0;
             $q=$this->db->prepare('INSERT INTO tbpersonalpermisos(id_usuario,pedidos,id_actor,updated_at) VALUES (?,?,?,UTC_TIMESTAMP()) ON DUPLICATE KEY UPDATE pedidos=VALUES(pedidos),id_actor=VALUES(id_actor),updated_at=UTC_TIMESTAMP()');$q->execute([$id,$permission,$actor]);
+            if(ServiceModel::installed($this->db)){$q=$this->db->prepare('UPDATE tbpersonalpermisos SET servicios=? WHERE id_usuario=?');$q->execute([$role==='Empleado' && ($input['servicios']??'0')==='1'?1:0,$id]);$this->audit($id,$actor,'permiso_servicios','Servicios: '.($role==='Empleado' && ($input['servicios']??'0')==='1'?'sí':'no').'.');}
             $this->audit($id,$actor,'gestion_cuenta','Rol: '.$role.'; estado: '.$status.'; pedidos: '.($permission?'sí':'no').'.');$this->db->commit();return $id;
         }catch(Throwable $error){if($this->db->inTransaction())$this->db->rollBack();if($error instanceof PDOException && (int)($error->errorInfo[1]??0)===1062)throw new InvalidArgumentException('Ya existe una cuenta con ese correo.');throw $error;}
     }

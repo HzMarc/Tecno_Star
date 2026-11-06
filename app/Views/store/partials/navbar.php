@@ -1,4 +1,5 @@
 <?php
+require_once BASE_PATH . '/app/Views/partials/help-assets.php';
 
 $isAuthenticated = isset($_SESSION['user']);
 $currentUserName = $isAuthenticated ? (string) ($_SESSION['user']['name'] ?? '') : '';
@@ -27,7 +28,7 @@ $navbarQuery = is_string($_GET['q'] ?? null) ? $_GET['q'] : '';
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= app_url_html('/#servicios') ?>">
+                        <a class="nav-link" href="<?= app_url_html('/services') ?>">
                             <i class="bi bi-printer" aria-hidden="true"></i> Servicios
                         </a>
                     </li>
@@ -55,6 +56,8 @@ $navbarQuery = is_string($_GET['q'] ?? null) ? $_GET['q'] : '';
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end store-account-menu__options" id="store-account-options" aria-labelledby="store-account-toggle">
                                 <li><a class="dropdown-item" href="<?= app_url_html('/orders') ?>"><i class="bi bi-receipt" aria-hidden="true"></i> Mis pedidos</a></li>
+                                <li><a class="dropdown-item" href="<?= app_url_html('/services/requests') ?>"><i class="bi bi-printer" aria-hidden="true"></i> Mis solicitudes</a></li>
+                                <?php if(($_SESSION['user']['role']??'')==='Administrador' || (($_SESSION['user']['role']??'')==='Empleado' && !empty($_SESSION['user']['permiso_servicios']))): ?><li><a class="dropdown-item" href="<?= app_url_html('/admin/services') ?>">Gestionar servicios</a></li><?php if(!OrderModel::isStaff(['id_usuario'=>$_SESSION['user']['id'],'nombre_rol'=>$_SESSION['user']['role'],'permiso_pedidos'=>$_SESSION['user']['permiso_pedidos']??null])): ?><li><a class="dropdown-item" href="<?= app_url_html('/admin/sales') ?>">Ventas de servicios</a></li><li><a class="dropdown-item" href="<?= app_url_html('/admin/cash') ?>">Cobrar servicios</a></li><?php endif; ?><?php endif; ?>
                                 <li><a class="dropdown-item" href="<?= app_url_html('/purchases') ?>"><i class="bi bi-bag-check" aria-hidden="true"></i> Mis compras</a></li>
                                 <?php if(class_exists('OrderModel') && OrderModel::isStaff(['id_usuario'=>$_SESSION['user']['id'],'nombre_rol'=>$_SESSION['user']['role'],'permiso_pedidos'=>$_SESSION['user']['permiso_pedidos']??null])): ?><li><a class="dropdown-item" href="<?= app_url_html('/admin/orders') ?>"><i class="bi bi-qr-code-scan" aria-hidden="true"></i> Gestionar pedidos</a></li><li><a class="dropdown-item" href="<?= app_url_html('/admin/sales') ?>"><i class="bi bi-cash-stack" aria-hidden="true"></i> Ventas</a></li><li><a class="dropdown-item" href="<?= app_url_html('/admin/cash') ?>"><i class="bi bi-cash-coin" aria-hidden="true"></i> Caja</a></li><?php endif; ?>
                                 <li><a class="dropdown-item" href="<?= app_url_html('/profile') ?>"><i class="bi bi-person" aria-hidden="true"></i> Mi perfil</a></li>

@@ -120,3 +120,12 @@ GOOGLE_REDIRECT_URI=http://localhost:8012/Tecno_Star/public/auth/google/callback
 Para publicar después, crea un cliente OAuth de producción, usa el dominio HTTPS real y registra su callback exacto. Actualiza `APP_URL` y `GOOGLE_REDIRECT_URI`, completa los datos de marca y privacidad y revisa los requisitos de publicación de Google. La configuración actual es local y no se publicó la aplicación.
 
 Fuentes oficiales: [crear credenciales](https://developers.google.com/workspace/guides/create-credentials), [OpenID Connect](https://developers.google.com/identity/openid-connect/openid-connect), [flujo OAuth para servidor](https://developers.google.com/identity/protocols/oauth2/web-server), [gestión de clientes](https://support.google.com/cloud/answer/15549257), [gestión y protección de secretos](https://developers.googleblog.com/en/usability-and-safety-updates-to-google-auth-platform/).
+
+
+## Comprobación del 31 de octubre de 2026
+
+El error de login fue `Firebase\JWT\BeforeValidException`: Google emitía tokens unos cuatro segundos por delante del reloj de Windows. Se corrigió la verificación en `GoogleOAuth` con un margen acotado de 60 segundos, restaurando la tolerancia de la biblioteca al terminar. No se desactivó la firma, no se guardan tokens y la fecha de vencimiento sigue siendo estricta. Los intentos con una diferencia mayor se rechazan e indican sincronizar el reloj.
+
+Se verificó un acceso real en Chrome: selección de la cuenta Google, retorno a Tecno Star y sesión autenticada. También pasaron pruebas firmadas con reloj adelantado, rechazo de tokens vencidos o firmas ajenas, state, nonce, PKCE y aislamiento de cuentas.
+
+Gmail SMTP confirmó TLS y autenticación; el único correo de prueba autorizado fue localizado en Recibidos del destinatario. Los mensajes de confirmación de pedidos llevan logo; el QR de retiro se incluye exclusivamente en el aviso de trabajo listo.

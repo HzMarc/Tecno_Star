@@ -74,6 +74,18 @@ try {
     $identity = GoogleOAuth::callback(['state' => $attempt['state'], 'code' => 'synthetic'], $mockClient($jwt));
     googleCheck($identity['subject'] === '123456789' && !isset($_SESSION['google_attempt']) && !str_contains(json_encode($_SESSION), 'synthetic'), 'intercambio y firma RS256 verificados sin guardar tokens');
     googleReject(fn() => GoogleOAuth::callback(['state' => $attempt['state'], 'code' => 'synthetic']), 'callback no reutilizable');
+    $previousLeeway = Firebase\JWT\JWT::$leeway;
+    $ahead = Firebase\JWT\JWT::encode(array_replace($claims, ['iat'=>time()+4]), $privateKey, 'RS256', 'synthetic-key');
+    $_SESSION['google_attempt'] = $attempt;
+    $accepted = GoogleOAuth::callback(['state'=>$attempt['state'],'code'=>'synthetic'], $mockClient($ahead));
+    googleCheck($accepted['subject']===$identity['subject'] && Firebase\JWT\JWT::$leeway===$previousLeeway, 'desfase de cuatro segundos se acepta con firma válida y tolerancia restaurada');
+    $tooEarly = Firebase\JWT\JWT::encode(array_replace($claims, ['iat'=>time()+120]), $privateKey, 'RS256', 'synthetic-key');
+    $_SESSION['google_attempt'] = $attempt;
+    googleReject(fn()=>GoogleOAuth::callback(['state'=>$attempt['state'],'code'=>'synthetic'], $mockClient($tooEarly)), 'reloj fuera de tolerancia no autentica');
+    googleCheck(Firebase\JWT\JWT::$leeway===$previousLeeway && !isset($_SESSION['google_attempt']), 'fallo temporal restaura JWT y consume el intento');
+    $expired = Firebase\JWT\JWT::encode(array_replace($claims, ['iat'=>time()-300,'exp'=>time()-1]), $privateKey, 'RS256', 'synthetic-key');
+    $_SESSION['google_attempt'] = $attempt;
+    googleReject(fn()=>GoogleOAuth::callback(['state'=>$attempt['state'],'code'=>'synthetic'], $mockClient($expired)), 'token vencido se rechaza incluso dentro del margen de reloj');
     $otherKey = openssl_pkey_new($keyOptions);
     $badJwt = Firebase\JWT\JWT::encode($claims, $otherKey, 'RS256', 'synthetic-key');
     $_SESSION['google_attempt'] = $attempt;

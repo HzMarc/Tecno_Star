@@ -26,7 +26,7 @@ $pageUrl=static fn(int $page)=>app_url_html('/purchases?'.http_build_query(array
     <article class="orders-panel purchase-card">
         <header><span class="purchase-icon"><i class="bi bi-receipt" aria-hidden="true"></i></span><span class="purchase-state <?= $refunded?'purchase-state--refunded':'' ?>"><?= $refunded?'Reembolsada':'Pagada' ?></span></header>
         <div><h2><?= $e($card['codigo_venta']) ?></h2><p class="purchase-date"><i class="bi bi-calendar3" aria-hidden="true"></i> <?= $date($card['fecha_pago']) ?></p></div>
-        <dl class="purchase-details"><dt>Pedido</dt><dd><?= $e($card['codigo_pedido']) ?></dd><dt>Método de pago</dt><dd>Efectivo</dd></dl>
+        <dl class="purchase-details"><dt><?= ($card['origen']??'producto')==='servicio'?'Servicio':'Pedido' ?></dt><dd><?= $e($card['codigo_pedido']) ?></dd><dt>Método de pago</dt><dd>Efectivo</dd></dl>
         <footer><div><span><?= $refunded?'Total reembolsado':'Total de la compra' ?></span><strong>$<?= $e(number_format((float)$card['total'],2)) ?></strong></div><a class="order-primary" aria-label="Ver comprobante <?= $e($card['codigo_venta']) ?>" href="<?= app_url_html('/sales/detail?id='.(int)$card['id_venta']) ?>">Ver comprobante <i class="bi bi-arrow-right" aria-hidden="true"></i></a></footer>
     </article>
 <?php endforeach; ?>

@@ -22,7 +22,7 @@ $initials = mb_strtoupper(
     <link rel="stylesheet" href="<?= app_url_html('/assets/css/app.css?v='.filemtime(BASE_PATH.'/public/assets/css/app.css')) ?>">
     <link rel="stylesheet" href="<?= app_url_html('/assets/css/profile.css?v='.filemtime(BASE_PATH.'/public/assets/css/profile.css')) ?>">
     <link rel="stylesheet" href="<?= app_url_html('/assets/css/accounts.css?v='.filemtime(BASE_PATH.'/public/assets/css/accounts.css')) ?>"><script defer src="<?= app_url_html('/assets/js/commerce.js?v='.filemtime(BASE_PATH.'/public/assets/js/commerce.js')) ?>"></script>
-</head>
+<?php require_once BASE_PATH . '/app/Views/partials/help-assets.php'; ?></head>
 <body>
     <header class="profile-header">
         <div class="profile-header__inner">

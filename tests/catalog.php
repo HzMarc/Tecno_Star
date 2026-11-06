@@ -16,16 +16,16 @@ function catalogCheck(bool $ok, string $message): void
     if (!$ok) throw new RuntimeException('FALLO: ' . $message);
     echo 'OK: ' . $message . "\n";
 }
-function catalogRequest(string $path, string &$cookie, ?array $data=null, ?array $file=null): array
+function catalogRequest(string $path, string &$cookie, ?array $data=null, ?array $file=null, array $extraHeaders=[]): array
 {
-    $headers=['Connection: close']; $body='';
+    $headers=array_merge(['Connection: close'],$extraHeaders); $body='';
     if ($cookie !== '') $headers[]='Cookie: ' . $cookie;
     if ($data !== null) {
         if ($file !== null) {
             $boundary='CatalogTest' . bin2hex(random_bytes(10));
             $headers[]='Content-Type: multipart/form-data; boundary=' . $boundary;
             foreach ($data as $key=>$value) $body.="--$boundary\r\nContent-Disposition: form-data; name=\"$key\"\r\n\r\n$value\r\n";
-            $body.="--$boundary\r\nContent-Disposition: form-data; name=\"image\"; filename=\"" . $file['name'] . "\"\r\nContent-Type: " . $file['type'] . "\r\n\r\n" . $file['bytes'] . "\r\n--$boundary--\r\n";
+            $body.="--$boundary\r\nContent-Disposition: form-data; name=\"".($file['field']??'image')."\"; filename=\"" . $file['name'] . "\"\r\nContent-Type: " . $file['type'] . "\r\n\r\n" . $file['bytes'] . "\r\n--$boundary--\r\n";
         } else { $headers[]='Content-Type: application/x-www-form-urlencoded'; $body=http_build_query($data); }
     }
     $context=stream_context_create(['http'=>['method'=>$data===null?'GET':'POST','header'=>implode("\r\n",$headers),'content'=>$body,'ignore_errors'=>true,'follow_location'=>0,'timeout'=>10]]);
@@ -189,6 +189,7 @@ try {
     [$status,$html]=catalogRequest('/admin/catalog?kind=brands&q=editada&status=activo',$cookie);
     catalogCheck($status===200 && str_contains($html,'1 registros encontrados') && str_contains($html,'Marca editada'),'búsqueda y estado en marcas');
     [$status]=catalogRequest('/admin/products?category[]=1',$cookie); catalogCheck($status===422,'filtros estructurados inválidos rechazados sin error interno');
+    require __DIR__ . '/catalog-inline-checks.php';
     $admin->exec("UPDATE tbusuarios SET id_rol=(SELECT id_rol FROM tbroles WHERE nombre_rol='Cliente') WHERE correo='admin@catalog.example.test'");
     [$status]=catalogRequest('/admin/products/state',$cookie,['id'=>(string)$productId,'estado'=>'inactivo','_csrf'=>$token]); catalogCheck($status===403,'revocación de administrador bloquea siguiente escritura');
     $admin->exec("UPDATE tbusuarios SET id_rol=(SELECT id_rol FROM tbroles WHERE nombre_rol='Administrador') WHERE correo='admin@catalog.example.test'");
@@ -201,9 +202,10 @@ try {
     if (in_array('--closure',$argv,true)) require __DIR__ . '/closure-checks.php';
     if (in_array('--purchase-cards',$argv,true)) require __DIR__ . '/purchase-cards-checks.php';
     if (in_array('--ready-mail',$argv,true)) require __DIR__ . '/ready-mail-checks.php';
+    if (in_array('--services',$argv,true)) require __DIR__ . '/services-checks.php';
     if(in_array('--preview',$argv,true)) { echo "Vista de prueba: http://127.0.0.1:18014/admin/products | admin@catalog.example.test / CatalogPreview2026!\nPulsa Enter para cerrar la vista temporal.\n"; fgets(STDIN); }
     $exitCode=0;
-} catch(Throwable $exception) { fwrite(STDERR,$exception->getMessage() . "\n"); }
+} catch(Throwable $exception) { fwrite(STDERR,$exception->getMessage() . "\n" . $exception->getFile() . ":" . $exception->getLine() . "\n"); }
 finally {
     if(is_resource($process)) { proc_terminate($process); proc_close($process); }
     if($admin instanceof PDO && $account!==null) $admin->exec('DROP USER ' . $account);

@@ -36,7 +36,7 @@ try {
         $postLimitBytes = (int) $sizeMatch[1] * (1024 ** (['K'=>1,'M'=>2,'G'=>3][strtoupper($sizeMatch[2] ?? '')] ?? 0));
     }
     if ($method === 'POST' && $postLimitBytes > 0 && (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > $postLimitBytes) {
-        ErrorHandler::respond(413, 'El formulario supera el tamaño máximo permitido. Usa una imagen de hasta 4 MiB y vuelve a enviarlo.');
+        ErrorHandler::respond(413, 'El formulario supera el límite del servidor. En servicios usa hasta 5 archivos de 10 MiB y 30 MiB en total; las imágenes del catálogo admiten hasta 4 MiB.');
     } elseif (!in_array($method, ['GET', 'HEAD', 'OPTIONS'], true)
         && !Csrf::valid($_SERVER['HTTP_X_CSRF_TOKEN'] ?? ($_POST['_csrf'] ?? null))) {
         ErrorHandler::respond(403, 'La sesión del formulario venció. Recarga la página e intenta nuevamente.');

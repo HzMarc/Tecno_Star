@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+require_once BASE_PATH.'/app/Models/ServiceModel.php';
 
 final class UserModel
 {
@@ -29,7 +30,7 @@ final class UserModel
     public function findActiveByEmail(string $email): ?array
     {
         $statement = $this->database->prepare(
-            "SELECT u.*,r.nombre_rol,c.telefono,".$this->permissionSql()." AS permiso_pedidos
+            "SELECT u.*,r.nombre_rol,c.telefono,".$this->permissionSql()." AS permiso_pedidos,".(ServiceModel::installed($this->database)?'(SELECT servicios FROM tbpersonalpermisos WHERE id_usuario=u.id_usuario)':'NULL')." AS permiso_servicios
              FROM tbusuarios u
              INNER JOIN tbroles r ON r.id_rol = u.id_rol
              LEFT JOIN tbclientes c ON c.id_usuario = u.id_usuario
@@ -45,7 +46,7 @@ final class UserModel
     public function findActiveById(int $userId): ?array
     {
         $statement = $this->database->prepare(
-            "SELECT u.*,r.nombre_rol,c.telefono,".$this->permissionSql()." AS permiso_pedidos
+            "SELECT u.*,r.nombre_rol,c.telefono,".$this->permissionSql()." AS permiso_pedidos,".(ServiceModel::installed($this->database)?'(SELECT servicios FROM tbpersonalpermisos WHERE id_usuario=u.id_usuario)':'NULL')." AS permiso_servicios
              FROM tbusuarios u
              INNER JOIN tbroles r ON r.id_rol = u.id_rol
              LEFT JOIN tbclientes c ON c.id_usuario = u.id_usuario

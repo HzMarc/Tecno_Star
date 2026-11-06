@@ -35,6 +35,34 @@
         close.dataset.dismissToast = ''; close.setAttribute('aria-label', 'Cerrar notificación'); close.textContent = '×';
         toast.append(icon, text, close); toasts.append(toast); activateToast(toast);
     };
+    const quickDialog = document.querySelector('[data-quick-entity-dialog]');
+    const quickForm = quickDialog?.querySelector('[data-quick-entity-form]');
+    let quickBusy = false, quickSelect = null, quickOpener = null;
+    quickDialog?.addEventListener('cancel', event => { if (quickBusy) event.preventDefault(); });
+    quickDialog?.addEventListener('keydown', event => event.stopPropagation());
+    quickDialog?.addEventListener('close', () => quickOpener?.isConnected && quickOpener.focus());
+    quickDialog?.querySelectorAll('[data-quick-entity-close]').forEach(button => button.addEventListener('click', () => { if (!quickBusy) quickDialog.close(); }));
+    quickForm?.addEventListener('submit', async event => {
+        event.preventDefault();
+        if (quickBusy || !quickForm.reportValidity()) return;
+        const data = new FormData(quickForm), error = quickForm.querySelector('[data-quick-entity-error]');
+        const buttons = [...quickDialog.querySelectorAll('button')];
+        quickBusy = true; error.hidden = true; buttons.forEach(button => button.disabled = true); quickForm.setAttribute('aria-busy','true');
+        try {
+            const response = await fetch(quickForm.action, { method:'POST', body:data, credentials:'same-origin', headers:{Accept:'application/json'}, signal:AbortSignal.timeout(15000) });
+            const result = await response.json();
+            if (!response.ok || !result.ok) throw new Error(result.error || 'No se pudo crear la opción. Revisa los datos.');
+            if (!Number.isInteger(result.option?.id) || result.option.id < 1 || typeof result.option.name !== 'string') throw new Error('No se pudo confirmar la nueva opción. Revisa el catálogo antes de reintentar.');
+            const option = new Option(result.option.name, String(result.option.id), false, true);
+            quickSelect.add(option); quickSelect.value = option.value; quickSelect.dispatchEvent(new Event('change',{bubbles:true}));
+            quickDialog.close(); notify(result.message);
+        } catch (failure) {
+            error.textContent = failure.name === 'TimeoutError' || failure.name === 'TypeError'
+                ? 'No se pudo confirmar la creación. Revisa Categorías o Marcas antes de reintentar; tus datos del producto siguen aquí.'
+                : failure.message || 'No se pudo guardar. Intenta nuevamente.';
+            error.hidden = false;
+        } finally { quickBusy = false; buttons.forEach(button => button.disabled = false); quickForm.removeAttribute('aria-busy'); }
+    });
     const show = (content, label, trigger, compact = false) => {
         body.replaceChildren(content);
         title.textContent = label;
@@ -64,6 +92,17 @@
     });
 
     document.addEventListener('click', async (event) => {
+        const quickButton = event.target.closest('[data-quick-entity]');
+        if (quickButton && quickForm) {
+            const kind = quickButton.dataset.quickEntity;
+            if (!['categories','brands'].includes(kind)) return;
+            quickSelect = quickButton.closest('form')?.elements[kind === 'categories' ? 'id_categoria' : 'id_marca'];
+            if (!quickSelect || quickBusy) return;
+            quickOpener = quickButton; quickForm.reset(); quickForm.elements.kind.value = kind;
+            quickDialog.querySelector('#quick-entity-title').textContent = kind === 'categories' ? 'Nueva categoría' : 'Nueva marca';
+            quickForm.querySelector('[data-quick-entity-error]').hidden = true;
+            quickDialog.showModal(); quickForm.elements.name.focus(); return;
+        }
         const dismiss = event.target.closest('[data-dismiss-toast]');
         if (dismiss) { dismissToast(dismiss.closest('.catalog-toast')); return; }
         const cancel = event.target.closest('[data-close-modal], .catalog-modal .catalog-save a');

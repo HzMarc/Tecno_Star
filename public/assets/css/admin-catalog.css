@@ -106,3 +106,26 @@
 }
 @media (prefers-reduced-motion:reduce) { .catalog-toast { animation:none; } }
 
+.catalog-reference{display:grid;gap:8px;min-width:0;align-content:start}
+.catalog-reference>label{margin:0}
+.catalog-reference__control{display:flex;align-items:stretch;gap:0}
+.catalog-reference__control>select{flex:1;min-width:0;border-radius:8px 0 0 8px}
+.catalog-reference__add{flex:0 0 44px;display:grid;place-items:center;border:1px solid #ccd6e6;border-left:0;border-radius:0 8px 8px 0;background:#edf2ff;color:#2054dd;font-size:1.45rem;cursor:pointer}
+.catalog-reference__add:hover{background:#2054dd;color:#fff}
+.catalog-reference__add:focus-visible{outline:3px solid #9aacee;outline-offset:2px}
+.catalog-quick-create{width:min(460px,calc(100% - 32px));max-height:90dvh;overflow:auto;border:0;border-radius:18px;padding:24px;color:#243147;box-shadow:0 20px 80px #10223e40}
+.catalog-quick-create::backdrop{background:#10203580}
+.catalog-quick-create>header{display:flex;justify-content:space-between;align-items:start;gap:16px}
+.catalog-quick-create h2{font-size:1.2rem;margin:0}
+.catalog-quick-create>header>button{flex:none;width:34px;height:34px;border:0;border-radius:8px;background:#f0f3f8;font-size:1.4rem;cursor:pointer}
+.catalog-quick-create>p{font-size:.85rem;line-height:1.65;color:#627287}
+.catalog-quick-create label{display:grid;gap:8px;font-size:.9rem;font-weight:600}
+.catalog-quick-create input:not([type=hidden]){width:100%;min-height:44px;padding:10px 12px;border:1px solid #ccd6e6;border-radius:8px;font:inherit}
+.catalog-quick-create input:focus{outline:3px solid #2054dd25;border-color:#2054dd}
+.catalog-quick-create footer{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:22px}
+.catalog-quick-create footer>button{min-height:42px;padding:10px 14px;border:1px solid #ccd6e6;border-radius:8px;background:#fff;color:#243147;cursor:pointer;font:inherit;font-size:.85rem}
+.catalog-quick-create footer>button[type=submit]{background:#2054dd;color:white;border-color:#2054dd}
+.catalog-quick-create button:disabled{opacity:.6;cursor:wait}
+.catalog-quick-create__error{padding:10px 12px;border-radius:8px;background:#fff0ef;color:#a32d28;font-size:.85rem;line-height:1.6}
+.catalog-quick-create__error[hidden]{display:none}
+

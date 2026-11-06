@@ -1,0 +1,99 @@
+.services-page{max-width:1280px;margin:0 auto;padding:48px 24px 64px;color:#203047;font-family:'Open Sans',sans-serif}.services-heading{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin-bottom:28px}.services-heading h1{font-family:Poppins,sans-serif;font-size:clamp(1.8rem,4vw,2.6rem);margin:8px 0 12px}.services-heading p,.services-help{color:#627287}.services-eyebrow{color:#506cd8;font-weight:700;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase}.services-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.services-intro{display:flex;gap:20px;background:#eef2ff;border:1px solid #dfe6ff;border-radius:18px;padding:24px;margin-bottom:24px}.services-intro>i{font-size:2rem;color:#506cd8}.services-intro p{margin:6px 0 0}.services-filters{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;margin:22px 0}.services-filters label{flex:1;min-width:160px}.service-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}.service-card{display:flex;flex-direction:column;gap:12px;border:1px solid #e0e5ee;border-radius:18px;background:#fff;padding:26px;box-shadow:0 6px 20px #20304706}.service-card h2{font-family:Poppins,sans-serif;font-size:1.25rem;margin:0}.service-card p{color:#627287;margin:0;line-height:1.7}.service-card>.btn{margin-top:auto}.service-card__icon{width:48px;height:48px;border-radius:14px;background:#eef2ff;display:grid;place-items:center;font-size:1.5rem;color:#506cd8}.service-card__price{font-size:1.15rem;font-weight:700}.service-card__price small{display:block;font-size:.8rem;font-weight:400;color:#627287;margin-top:5px}.service-card__time{font-size:.85rem}.service-panel{border:1px solid #e0e5ee;background:#fff;border-radius:18px;padding:28px;margin:24px 0;min-width:0}.service-panel h2{font-family:Poppins,sans-serif;font-size:1.35rem}.service-panel h3{font-size:1.1rem;margin-top:28px}.service-request-panel{max-width:850px;margin:auto}.services-page label,.service-dialog label{display:grid;gap:7px;font-size:.9rem;font-weight:600;margin:14px 0}.services-page input,.services-page textarea,.services-page select,.service-dialog input,.service-dialog textarea,.service-dialog select{border:1px solid #cfd7e4;border-radius:8px;padding:11px 12px;width:100%;max-width:100%;background:#fff;color:#203047;font:inherit}.services-page input:focus,.services-page select:focus,.services-page textarea:focus,.service-dialog input:focus,.service-dialog textarea:focus{outline:2px solid #9aacee;outline-offset:2px}.service-fields{display:grid;grid-template-columns:1fr 1fr;gap:18px}.services-help{font-size:.85rem;line-height:1.7;margin:16px 0}.service-detail-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:24px}.service-detail-grid>.service-panel{margin-top:0}.service-facts{display:grid;grid-template-columns:140px 1fr;gap:10px;margin:24px 0}.service-facts dt{color:#627287;font-size:.85rem}.service-facts dd{overflow-wrap:anywhere;margin:0}.service-status{display:inline-block;background:#edf3ff;color:#375895;padding:7px 12px;border-radius:30px;font-size:.85rem;font-weight:600}.service-files{padding:0;list-style:none}.service-files li{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid #edf0f5}.service-files a{overflow-wrap:anywhere}.service-files small{color:#627287}.service-preserve{white-space:pre-wrap;overflow-wrap:anywhere}.service-total{font-size:1.5rem;font-weight:700;color:#354fbd}.service-panel form{margin:16px 0}.service-check{display:flex!important;align-items:flex-start;gap:10px!important}.service-check input{width:20px;flex:none}.service-cash{border-top:1px solid #e0e5ee;margin-top:26px;padding-top:8px}.service-error{color:#a22e35;background:#fff1f1;border-radius:8px;padding:12px;overflow-wrap:anywhere}.service-dialog{border:0;border-radius:18px;padding:28px;width:min(850px,94vw);max-height:90dvh;overflow:auto;box-shadow:0 20px 80px #0004;color:#203047}.service-dialog::backdrop{background:#10203599}.service-dialog header{display:flex;justify-content:space-between;gap:15px}.service-dialog header>button{background:none;border:0;font-size:1.7rem}.service-dialog h2{font-size:1.3rem}.service-quote-line{display:grid;grid-template-columns:2fr 1fr 1.2fr 32px;gap:10px;align-items:center}.service-history{list-style:none;padding:0}.service-history li{border-left:3px solid #dce4ff;padding:8px 18px;margin:16px 0}.service-history strong{display:block;font-size:.95rem;font-weight:500;overflow-wrap:anywhere}.service-history small{color:#627287}.services-pagination{display:flex;gap:12px;align-items:center;margin-top:24px;flex-wrap:wrap}.services-empty{padding:32px;text-align:center;color:#627287}.services-page [hidden]{display:none!important}.services-page details{margin-top:20px}.services-page summary{color:#375895;cursor:pointer;padding:8px 0}.services-page .btn{white-space:normal}.service-panel .table{min-width:440px}.services-page .btn-primary{background:#4263cf;border-color:#4263cf}.services-page .btn-outline-primary{color:#4263cf;border-color:#ccd6f7}.services-page .btn-outline-primary:hover{background:#4263cf;color:white}
+@media(max-width:991px){.service-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.services-heading{flex-direction:column}.service-detail-grid{grid-template-columns:1fr}}
+@media(max-width:575px){.services-page{padding:28px 16px}.service-card-grid{grid-template-columns:1fr}.service-card,.service-panel{padding:20px}.service-fields{grid-template-columns:1fr;gap:0}.service-facts{grid-template-columns:1fr;gap:5px}.service-facts dd{margin-bottom:10px}.service-quote-line{grid-template-columns:1fr 1fr}.service-quote-line>label:first-child{grid-column:1/-1}.service-dialog{padding:20px}.services-intro{padding:18px;gap:12px}.services-heading .services-actions{width:100%}.services-actions .btn{flex:1}.service-panel .table{font-size:.85rem}}
+
+.service-dialog header>button{color:#203047;width:40px;height:40px;min-height:40px;flex:none;align-self:flex-start;padding:0;margin:0;border-radius:8px}.service-dialog header>button:hover{background:#edf2fa}.service-dialog header>button:focus-visible{outline:2px solid #4263cf;outline-offset:2px}
+
+/* Mantiene el boton alineado con los controles, sin el margen general de labels. */
+.services-page .services-filters>label{margin:0}
+.services-filters :is(input,select,.btn){min-height:46px}
+.services-filters .btn{display:inline-flex;align-items:center;justify-content:center}
+
+/* Navegacion y controles consistentes en los formularios de todos los servicios. */
+.services-back{display:inline-flex;align-items:center;gap:8px;margin-bottom:18px}
+.services-page label,.service-dialog label{align-content:start}
+.service-fields{align-items:start}
+.service-fields :is(input,select),.services-page input[type="date"],.service-dialog input[type="date"]{min-height:46px;min-width:0;box-sizing:border-box}
+.services-page label>small,.service-dialog label>small{color:#627287;font-weight:400;line-height:1.5}
+
+/* Conserva el espacio del menu lateral y la navegacion por teclado. */
+.services-page.admin-main{width:auto;max-width:none;margin-left:var(--admin-sidebar-width);margin-right:0;padding-top:6rem}
+.admin-sidebar-collapsed .services-page.admin-main{margin-left:var(--admin-sidebar-rail)}
+.services-heading>div{min-width:0}
+.services-heading h1{text-align:left;font-size:clamp(1.65rem,2.8vw,2.3rem);overflow-wrap:anywhere}
+.services-heading p,.service-panel p,.services-help,.service-next-step p{text-align:left}
+.services-page .btn,.service-dialog .btn{--bs-btn-focus-shadow-rgb:66,99,207}
+.services-page .btn-outline-primary,.service-dialog .btn-outline-primary{--bs-btn-bg:transparent;--bs-btn-hover-color:#fff;--bs-btn-hover-bg:#4263cf;--bs-btn-hover-border-color:#4263cf;--bs-btn-active-color:#fff;color:#4263cf;border-color:#ccd6f7;background:transparent}
+.services-page .btn-outline-primary:hover,.service-dialog .btn-outline-primary:hover{color:#fff;background:#4263cf;border-color:#4263cf}
+.services-page .btn-outline-danger,.service-dialog .btn-outline-danger{color:#b42335;background:transparent;border-color:#efc5cc}
+.services-page .btn-outline-danger:hover,.service-dialog .btn-outline-danger:hover{color:#fff;background:#b42335;border-color:#b42335}
+:is(.services-page,.service-dialog) .btn:focus:not(:focus-visible){box-shadow:none;outline:none}
+:is(.services-page,.service-dialog) .btn:focus-visible{outline:3px solid #9aacee;outline-offset:3px;box-shadow:none}
+.services-public-link{display:inline-flex;align-items:center;gap:6px;min-height:40px;color:#627287;font-size:.82rem;text-decoration:none}
+.services-public-link:hover{color:#4263cf;text-decoration:underline}
+.service-inbox-states{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 24px}
+.service-inbox-states a{display:inline-flex;align-items:center;gap:10px;min-height:42px;padding:9px 13px;border:1px solid #e0e5ee;border-radius:10px;background:#fff;color:#526077;font-size:.8rem;text-decoration:none}
+.service-inbox-states strong{display:grid;place-items:center;min-width:24px;height:24px;border-radius:7px;background:#f0f3f8;font-size:.75rem}
+.service-inbox-states a[aria-current]{color:#304fba;border-color:#aebfed;background:#edf2ff}
+.service-inbox-states a[aria-current] strong{color:white;background:#4263cf}
+.service-inbox-states a:hover{border-color:#9aacee}
+.service-inbox-states a:focus-visible,.services-public-link:focus-visible{outline:3px solid #9aacee;outline-offset:3px}
+.service-inbox-heading{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.service-inbox-heading h2{margin:0 0 6px;font-size:1.1rem}
+.service-inbox-heading p{margin:0;font-size:.82rem;color:#627287}
+.service-inbox-heading>span{flex:none;font-size:.8rem;color:#627287}
+.service-inbox .services-filters{padding-bottom:22px;border-bottom:1px solid #edf0f5}
+.service-inbox .services-filters label:first-child{flex:2}
+.service-inbox .dt-container{padding:0}
+.service-inbox table{width:100%;min-width:560px}
+.service-inbox .service-inbox-table :is(th,td){padding:16px 12px;border-bottom:1px solid #edf0f5;vertical-align:middle;font-size:.82rem;white-space:normal}
+.service-inbox .service-inbox-table th{color:#627287;font-size:.75rem;font-weight:600;background:#f8fafd}
+.service-table-code{display:block;margin-top:6px;font-size:.72rem;color:#627287;overflow-wrap:anywhere}
+.service-inbox-table td:first-child{width:28%}
+.service-inbox-table .service-table-open{min-height:38px;padding:7px 12px;font-size:.8rem}
+.service-status{width:fit-content;line-height:1.35}
+.service-status--nueva{background:#edf2ff;color:#3656bb}
+.service-status--en_cotizacion,.service-status--cotizada{background:#fff5df;color:#8b600e}
+.service-status--aceptada,.service-status--en_proceso{background:#edf0fc;color:#5844a3}
+.service-status--lista,.service-status--entregada{background:#eaf6f0;color:#23664c}
+.service-status--cancelada{background:#fff0f1;color:#9c3442}
+.service-next-step{display:flex;align-items:flex-start;gap:16px;border:1px solid #dbe4fb;border-radius:14px;padding:22px 24px;margin:0 0 24px;background:#eef3ff}
+.service-next-step>i{font-size:1.5rem;color:#4263cf}
+.service-next-step span{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#627287}
+.service-next-step h2{margin:5px 0 8px;font-size:1.05rem}
+.service-next-step p{margin:0;font-size:.85rem;line-height:1.7;color:#526077}
+.service-work-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px;padding-top:20px;border-top:1px solid #edf0f5}
+.service-detail-grid .service-panel>.services-actions{margin-bottom:18px}
+.service-detail-grid .service-panel>h2{margin-bottom:8px}
+.service-catalog-help{max-width:820px;margin:0 0 22px}
+.service-catalog-tools{margin-bottom:22px}
+.service-panel>button[data-service-open^="category-"]{margin:6px 8px 0 0}
+.service-dialog .btn-primary{color:#fff;background:#4263cf;border-color:#4263cf}
+@media(max-width:991.98px){.services-page.admin-main,.admin-sidebar-collapsed .services-page.admin-main{margin-left:0;padding-top:5.75rem}}
+@media(max-width:575px){.service-inbox-heading{align-items:flex-start;flex-direction:column;gap:8px}.service-inbox-states{gap:6px}.service-inbox-states a{padding:7px 10px;gap:7px}.service-inbox .services-filters label{flex-basis:100%}.service-next-step{padding:18px}.service-inbox .service-inbox-table :is(th,td){padding:12px 9px}}
+@media(max-width:575px){
+    .service-inbox .service-inbox-table{min-width:0;border-collapse:separate;border-spacing:0}
+    .service-inbox-table thead{display:none}
+    .service-inbox .service-inbox-table :is(tbody,tr){display:block;width:100%}
+    .service-inbox-table tbody tr{padding:12px 0;border-bottom:1px solid #e0e5ee}
+    .service-inbox .service-inbox-table td:not([colspan]){display:grid;grid-template-columns:80px minmax(0,1fr);gap:5px 10px;width:100%;padding:9px 0;border:0;text-align:left}
+    .service-inbox-table td:not([colspan])::before{content:attr(data-label);font-size:.75rem;font-weight:600;color:#627287}
+    .service-inbox-table .service-table-code{grid-column:2;margin:0}
+    .service-inbox .service-inbox-table td[colspan]{display:block;border:0}
+}
+
+/* Los tres accesos comparten altura y alineación, también en pantallas pequeñas. */
+.services-admin-navigation>.btn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;white-space:nowrap}
+.services-admin-navigation .services-public-link{font-size:var(--bs-btn-font-size);text-decoration:none}
+
+/* Confirmaciones temporales, sin ocupar espacio dentro del contenido. */
+.service-toasts{position:fixed;top:20px;right:20px;z-index:3000;display:grid;gap:12px;width:min(380px,calc(100vw - 32px));pointer-events:none}
+.service-toast{display:flex;align-items:center;gap:12px;padding:16px;border:1px solid #dce5df;border-left:4px solid #21936a;border-radius:12px;background:#fff;color:#243147;box-shadow:0 8px 30px #10182824;font-size:.85rem;line-height:1.55;pointer-events:auto;animation:service-toast-enter .2s ease-out}
+.service-toast>i{flex:none;font-size:1.2rem;color:#16844b}
+.service-toast>span{flex:1;min-width:0;overflow-wrap:anywhere}
+.service-toast>button{display:grid;place-items:center;flex:none;width:32px;height:32px;padding:0;border:0;border-radius:6px;background:transparent;color:#667085;font:inherit;font-size:1.35rem;cursor:pointer}
+.service-toast>button:hover{background:#f0f3f8}
+.service-toast>button:focus-visible{outline:3px solid #9aacee;outline-offset:2px}
+@keyframes service-toast-enter{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:575px){.services-admin-navigation{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}.services-admin-navigation>.btn{font-size:.85rem;padding:10px 8px;white-space:normal}.services-admin-navigation .services-public-link{grid-column:1/-1}.service-toasts{top:16px;right:16px}}
+@media(prefers-reduced-motion:reduce){.service-toast{animation:none}}

@@ -5,6 +5,10 @@ declare(strict_types=1);
 final class RestrictedUser
 {
     public const PERMISSIONS = [
+        'tbserviciocategorias'=>'SELECT, INSERT, UPDATE','tbserviciocatalogo'=>'SELECT, INSERT, UPDATE',
+        'tbserviciosolicitudes'=>'SELECT, INSERT, UPDATE','tbserviciocotizaciones'=>'SELECT, INSERT, UPDATE',
+        'tbservicioarchivos'=>'SELECT, INSERT, UPDATE (eliminado_at)','tbserviciohistorial'=>'SELECT, INSERT',
+        'tbserviciocorreos'=>'SELECT, INSERT, UPDATE',
         'tbgoogleidentidades' => 'SELECT, INSERT',
         'tbreinversiones'=>'SELECT, INSERT',
         'tbroles' => 'SELECT', 'tbusuarios' => 'SELECT, INSERT, UPDATE (nombres, apellidos, id_rol, estado, password_hash, session_version, cuenta_revision)', 'tbclientes' => 'SELECT, INSERT, UPDATE (nombres, apellidos, telefono)',

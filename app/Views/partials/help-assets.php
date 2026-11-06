@@ -1,0 +1,2 @@
+<link rel="stylesheet" href="<?= app_url_html('/assets/css/context-help.css?v='.filemtime(BASE_PATH.'/public/assets/css/context-help.css')) ?>">
+<script defer src="<?= app_url_html('/assets/js/context-help.js?v='.filemtime(BASE_PATH.'/public/assets/js/context-help.js')) ?>" data-context-help-assets data-help-base="<?= app_url_html('/') ?>" data-help-role="<?= htmlspecialchars((string)($_SESSION['user']['role']??''), ENT_QUOTES, 'UTF-8') ?>"></script>

@@ -5,8 +5,8 @@ RewriteEngine On
     php_flag display_errors Off
     php_flag display_startup_errors Off
     php_flag log_errors On
-    php_value upload_max_filesize 4M
-    php_value post_max_size 6M
+    php_value upload_max_filesize 10M
+    php_value post_max_size 32M
 </IfModule>
 
 # No permite listar carpetas ni servir archivos de configuración.

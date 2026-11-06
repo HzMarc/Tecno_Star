@@ -21,11 +21,12 @@ final class AdminTableModel
         $stock = 'COALESCE(i.stock_actual - i.stock_reservado, 0)';
         $joins = ' FROM tbproductos p INNER JOIN tbcategorias c ON c.id_categoria=p.id_categoria LEFT JOIN tbmarcas m ON m.id_marca=p.id_marca LEFT JOIN tbinventario i ON i.id_producto=p.id_producto';
         if(in_array($kind,['sales','purchases'],true)){
-            $joins=' FROM tbventas s JOIN tbpedidos o ON o.id_pedido=s.id_pedido';$select='s.*,o.codigo_pedido';
-            $columns=$kind==='purchases'?['s.codigo_venta','o.codigo_pedido','s.fecha_pago','s.total','s.estado',null]:['s.codigo_venta','o.codigo_pedido','s.fecha_pago','s.total','s.recibido','s.cambio','s.estado',null];$searchColumns=['s.codigo_venta','o.codigo_pedido','s.estado'];$defaultOrder='s.id_venta DESC';$tie='s.id_venta';
+            $services=ServiceModel::installed($this->database);$reference=$services?'COALESCE(o.codigo_pedido,sr.codigo)':'o.codigo_pedido';
+            $joins=' FROM tbventas s LEFT JOIN tbpedidos o ON o.id_pedido=s.id_pedido'.($services?' LEFT JOIN tbserviciosolicitudes sr ON sr.id_solicitud=s.id_solicitud_servicio':'');$select='s.*,'.$reference.' AS codigo_pedido'.($services?",CASE WHEN s.id_solicitud_servicio IS NULL THEN 'producto' ELSE 'servicio' END AS origen":",'producto' AS origen");
+            $columns=$kind==='purchases'?['s.codigo_venta',$reference,'s.fecha_pago','s.total','s.estado',null]:['s.codigo_venta',$reference,'s.fecha_pago','s.total','s.recibido','s.cambio','s.estado',null];$searchColumns=['s.codigo_venta',$reference,'s.estado'];$defaultOrder='s.id_venta DESC';$tie='s.id_venta';
         }elseif($kind==='users'){
             $joins=' FROM tbusuarios u JOIN tbroles r ON r.id_rol=u.id_rol LEFT JOIN tbclientes c ON c.id_usuario=u.id_usuario LEFT JOIN tbpersonalpermisos pe ON pe.id_usuario=u.id_usuario';
-            $select='u.id_usuario,u.nombres,u.apellidos,u.correo,u.estado,u.cuenta_revision,r.nombre_rol,c.telefono,pe.pedidos AS permiso_pedidos';$columns=['u.nombres','u.correo','r.nombre_rol','u.estado','pe.pedidos',null];$searchColumns=['u.nombres','u.apellidos','u.correo','r.nombre_rol','u.estado'];$defaultOrder='u.id_usuario DESC';$tie='u.id_usuario';
+            $select='u.id_usuario,u.nombres,u.apellidos,u.correo,u.estado,u.cuenta_revision,r.nombre_rol,c.telefono,pe.pedidos AS permiso_pedidos,'.(ServiceModel::installed($this->database)?'pe.servicios':'NULL').' AS permiso_servicios';$columns=['u.nombres','u.correo','r.nombre_rol','u.estado','pe.pedidos',null];$searchColumns=['u.nombres','u.apellidos','u.correo','r.nombre_rol','u.estado'];$defaultOrder='u.id_usuario DESC';$tie='u.id_usuario';
         }elseif ($kind === 'orders') {
             $joins=' FROM tbpedidos o';$select="o.*,(SELECT s.estado FROM tbventas s WHERE s.id_pedido=o.id_pedido AND s.cobro_solicitud IS NOT NULL LIMIT 1) AS payment_state";
             $columns=['o.codigo_pedido','o.contacto_nombre','o.created_at','o.total','o.estado',null];
@@ -59,7 +60,10 @@ final class AdminTableModel
         $where = []; $params = [];
         $base='';$baseParams=[];
         if(in_array($kind,['sales','purchases'],true)){
-            $where[]='s.cobro_solicitud IS NOT NULL';if($owner!==null){$where[]='o.id_usuario=?';$params[]=$owner;}$base=' WHERE '.implode(' AND ',$where);$baseParams=$params;
+            $where[]='s.cobro_solicitud IS NOT NULL';if($owner!==null){$where[]=($services?'COALESCE(o.id_usuario,sr.id_usuario)':'o.id_usuario').'=?';$params[]=$owner;}
+            if(($input['_origin']??'')==='producto')$where[]='s.id_pedido IS NOT NULL';
+            if(($input['_origin']??'')==='servicio')$where[]=$services?'s.id_solicitud_servicio IS NOT NULL':'1=0';
+            $base=' WHERE '.implode(' AND ',$where);$baseParams=$params;
             foreach(['from'=>'>=','to'=>'<'] as $key=>$operator){$value=$input[$key]??'';if($value==='')continue;if(!is_string($value) || !preg_match('/^\d{4}-\d{2}-\d{2}$/D',$value) || !checkdate((int)substr($value,5,2),(int)substr($value,8,2),(int)substr($value,0,4)))throw new InvalidArgumentException('Fecha inválida.');$date=new DateTimeImmutable($value.' 00:00:00',new DateTimeZone('America/El_Salvador'));if($key==='to')$date=$date->modify('+1 day');$where[]="s.fecha_pago $operator ?";$params[]=$date->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s');}
             if(!empty($input['from']) && !empty($input['to']) && $input['from']>$input['to'])throw new InvalidArgumentException('El rango de fechas está invertido.');
             if(($input['method']??'')!=='' && ($input['method']??'')!=='efectivo')throw new InvalidArgumentException('Solo se registra efectivo.');

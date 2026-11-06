@@ -785,7 +785,7 @@ select {
 .rose-signature:hover canvas, .rose-signature:focus-visible canvas { opacity: 1; }
 .rose-signature > span { position: absolute; right: 0; bottom: 2px; left: 0; z-index: 1; font-family: "Playfair Display",Georgia,serif; font-size: 14px; font-weight: 700; line-height: 1.2; white-space: nowrap; }
 .rose-signature:focus-visible { outline: 2px solid #635068; outline-offset: 4px; }
-.rose-signature:hover, .rose-signature:focus, .rose-signature:active { background: transparent; color: #28232e; }
+.rose-signature:hover:not(:disabled), .rose-signature:focus, .rose-signature:active { background: transparent; color: #28232e; }
 .store-footer--organized a:focus-visible { outline: 2px solid #245ed8; outline-offset: 3px; border-radius: 3px; }
 @media (max-width: 1199.98px) {
     .store-navbar__search { max-width: 15rem; margin: 0 .5rem; }

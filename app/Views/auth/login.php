@@ -11,7 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?= app_url_html('/assets/css/app.css?v='.filemtime(BASE_PATH.'/public/assets/css/app.css')) ?>">
     <link rel="stylesheet" href="<?= app_url_html('/assets/css/auth.css?v='.filemtime(BASE_PATH.'/public/assets/css/auth.css')) ?>">
-</head>
+<?php require_once BASE_PATH . '/app/Views/partials/help-assets.php'; ?></head>
 <body class="auth-page auth-page--login">
     <main class="auth-container container-fluid">
         <div class="auth-layout">

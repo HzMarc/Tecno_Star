@@ -9,6 +9,8 @@ final class CashController
     }
     public function index():void
     {
+        $account=Auth::requireUser();if(!$account)return;
+        if(!OrderModel::isStaff($account) && ServiceModel::staff(Database::connection(),(int)$account['id_usuario'])){header('Location: '.app_url('/admin/services?status=lista'));return;}
         if(!($user=$this->user()))return;$db=Database::connection();$model=new OrderModel($db);$model->expireDue();$order=null;$sale=null;$problem='';
         if(isset($_GET['codigo'])){$code=$_GET['codigo'];if(!is_string($code) || !preg_match('/^TS-[0-9]{6}-[A-F0-9]{12}$/D',$code))$problem='Código de pedido inválido.';else{$q=$db->prepare('SELECT id_pedido FROM tbpedidos WHERE codigo_pedido=? AND retiro_solicitud IS NOT NULL');$q->execute([$code]);$id=$q->fetchColumn();if($id)$order=$model->find((int)$id,0,true);}}
         elseif(isset($_GET['id'])){$id=filter_var($_GET['id'],FILTER_VALIDATE_INT);if($id && $id>0)$order=$model->find($id,0,true);}

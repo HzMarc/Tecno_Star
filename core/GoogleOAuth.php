@@ -12,6 +12,7 @@ final class GoogleOAuthException extends RuntimeException {}
 final class GoogleOAuth
 {
     public const LIFETIME = 600;
+    public const CLOCK_SKEW_SECONDS = 60;
 
     public static function enabled(): bool
     {
@@ -84,7 +85,17 @@ final class GoogleOAuth
         if (isset($tokens['error']) || !is_string($tokens['id_token'] ?? null)) {
             throw new GoogleOAuthException('No fue posible verificar tu cuenta de Google. Vuelve a intentarlo.');
         }
-        $claims = $client->verifyIdToken($tokens['id_token']);
+        // Google puede emitir el token unos segundos por delante del reloj local.
+        // Limita la tolerancia a esta verificación y restaura el estado de JWT.
+        $previousLeeway = Firebase\JWT\JWT::$leeway;
+        try {
+            Firebase\JWT\JWT::$leeway = self::CLOCK_SKEW_SECONDS;
+            $claims = $client->verifyIdToken($tokens['id_token']);
+        } catch (Firebase\JWT\BeforeValidException $error) {
+            throw new GoogleOAuthException('La hora de esta computadora está desincronizada. Sincroniza la fecha y hora de Windows y vuelve a iniciar sesión con Google.', 0, $error);
+        } finally {
+            Firebase\JWT\JWT::$leeway = $previousLeeway;
+        }
         if (!is_array($claims)) {
             throw new GoogleOAuthException('No fue posible verificar tu cuenta de Google.');
         }
@@ -98,7 +109,7 @@ final class GoogleOAuth
             || ($claims['aud'] ?? null) !== GOOGLE_CLIENT_ID
             || (isset($claims['azp']) && $claims['azp'] !== GOOGLE_CLIENT_ID)
             || !is_int($claims['exp'] ?? null) || $claims['exp'] <= time()
-            || !is_int($claims['iat'] ?? null) || $claims['iat'] > time() + 60
+            || !is_int($claims['iat'] ?? null) || $claims['iat'] > time() + self::CLOCK_SKEW_SECONDS
             || !is_string($claims['nonce'] ?? null) || !hash_equals($nonce, $claims['nonce'])
             || !is_string($claims['sub'] ?? null) || !preg_match('/^[A-Za-z0-9_-]{1,255}$/D', $claims['sub'])
             || ($claims['email_verified'] ?? null) !== true

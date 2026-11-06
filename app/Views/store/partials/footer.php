@@ -9,7 +9,7 @@
             <nav aria-label="Explorar Tecno Star">
                 <h2>Explora</h2>
                 <a href="<?= app_url_html('/store') ?>">Catálogo de productos</a>
-                <a href="<?= app_url_html('/#servicios') ?>">Papelería y servicios</a>
+                <a href="<?= app_url_html('/services') ?>">Papelería y servicios</a>
                 <a href="<?= app_url_html('/#como-funciona') ?>">Cómo funciona</a>
             </nav>
             <nav aria-label="Ayuda y cuenta">

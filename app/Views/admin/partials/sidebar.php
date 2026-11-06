@@ -8,6 +8,7 @@ $shellItems = [
     ['brands', 'Marcas', 'bi-bookmark', '/admin/catalog?kind=brands'],
     ['inventory', 'Inventario', 'bi-clipboard2-data', '/admin/inventory'],
     ['orders', 'Pedidos', 'bi-receipt', '/admin/orders'],
+    ['services', 'Servicios', 'bi-printer', '/admin/services'],
     ['cash', 'Caja', 'bi-cash-coin', '/admin/cash'],
     ['sales', 'Ventas', 'bi-graph-up-arrow', '/admin/sales'],
     ['users', 'Usuarios', 'bi-people', '/admin/users'],
