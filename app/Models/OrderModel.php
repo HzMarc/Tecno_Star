@@ -114,6 +114,84 @@ final class OrderModel
     {
         return $this->retry(fn()=> $this->createOnce($userId,$input));
     }
+
+    public function reserveProduct(int $userId,array $input): array
+    {
+        return $this->retry(fn()=> $this->reserveProductOnce($userId,$input));
+    }
+
+    private function reserveProductOnce(int $userId,array $input): array
+    {
+        $productId=filter_var($input['product_id']??null,FILTER_VALIDATE_INT);
+        if(!$productId || $productId<1) throw new InvalidArgumentException('Producto inválido.');
+        $quantity=self::units($input['quantity']??null);
+        $request=$input['request_id']??'';
+        if(!is_string($request) || !preg_match('/^[a-f0-9]{64}$/D',$request)) throw new InvalidArgumentException('La solicitud de reserva no es válida.');
+        $contact=self::contact($input);
+        $fingerprint=hash('sha256',json_encode([$userId,$productId,$quantity,$contact],JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE));
+
+        $this->expireDue();
+        $this->begin();
+        try {
+            $actor=$this->actor($userId,true);
+            $previous=$this->db->prepare('SELECT id_pedido,id_usuario,retiro_huella FROM tbpedidos WHERE retiro_solicitud=?');
+            $previous->execute([$request]);
+            $existing=$previous->fetch();
+            if($existing) {
+                if((int)$existing['id_usuario']!==$userId || !hash_equals($existing['retiro_huella'],$fingerprint)) throw new OrderConflict('La solicitud ya se utilizó con otros datos.');
+                $this->db->commit();
+                $order=$this->find((int)$existing['id_pedido'],$userId,false);
+                if(!$order) throw new RuntimeException('La reserva repetida ya no está disponible.');
+                return $order+['repeated'=>true,'available_stock'=>$this->availableStock((int)$productId)];
+            }
+
+            $query=$this->db->prepare("SELECT p.id_producto,p.codigo_producto,p.nombre_producto,p.precio_venta,(p.estado='activo' AND c.estado='activo' AND (m.id_marca IS NULL OR m.estado='activo')) AS activo,COALESCE(i.stock_actual,0) AS fisico,COALESCE(i.stock_reservado,0) AS reservado FROM tbproductos p JOIN tbcategorias c ON c.id_categoria=p.id_categoria LEFT JOIN tbmarcas m ON m.id_marca=p.id_marca LEFT JOIN tbinventario i ON i.id_producto=p.id_producto WHERE p.id_producto=? FOR UPDATE");
+            $query->execute([$productId]);
+            $product=$query->fetch();
+            if(!$product || !$product['activo']) throw new DomainException('El producto ya no está disponible.');
+            $available=max(0,(int)floor((float)$product['fisico']-(float)$product['reservado']));
+            if($available<$quantity) throw new OrderConflict('Solo hay '.$available.($available===1?' unidad disponible.':' unidades disponibles.'));
+
+            $price=self::scaled((string)$product['precio_venta'],2);
+            if($price>intdiv(999999999999,$quantity)) throw new DomainException('El importe supera el máximo permitido.');
+            if(!$actor['id_cliente']) {
+                $query=$this->db->prepare('SELECT id_cliente FROM tbclientes WHERE id_usuario=? FOR UPDATE');
+                $query->execute([$userId]);
+                $actor['id_cliente']=$query->fetchColumn();
+                if(!$actor['id_cliente']) {
+                    $query=$this->db->prepare('INSERT INTO tbclientes(id_usuario,nombres,apellidos,telefono,correo_contacto) VALUES (?,?,?,?,?)');
+                    $query->execute([$userId,$actor['nombres'],$actor['apellidos'],preg_replace('/[ -]/','',$contact['telefono']),$actor['correo']]);
+                    $actor['id_cliente']=(int)$this->db->lastInsertId();
+                }
+            }
+
+            $code='TS-'.(new DateTimeImmutable('now',new DateTimeZone('America/El_Salvador')))->format('ymd').'-'.strtoupper(bin2hex(random_bytes(6)));
+            $legacyDate=(bool)$this->db->query("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='tbpedidos' AND COLUMN_NAME='fecha_confirmacion'")->fetchColumn();
+            $query=$this->db->prepare("INSERT INTO tbpedidos(codigo_pedido,id_usuario,id_cliente,estado,total,retiro_solicitud,retiro_huella,contacto_nombre,contacto_telefono,contacto_correo,nota_retiro,fecha_vencimiento,reserva_activa,created_at,updated_at".($legacyDate?',fecha_confirmacion':'').") VALUES (?,?,?,'pendiente',?,?,?,?,?,?,?,DATE_ADD(UTC_TIMESTAMP(),INTERVAL 24 HOUR),1,UTC_TIMESTAMP(),UTC_TIMESTAMP()".($legacyDate?',UTC_TIMESTAMP()':'').")");
+            $query->execute([$code,$userId,$actor['id_cliente'],self::decimal($price*$quantity,2),$request,$fingerprint,$contact['nombre'],$contact['telefono'],$contact['correo'],$contact['nota']]);
+            $orderId=(int)$this->db->lastInsertId();
+            $query=$this->db->prepare('INSERT INTO tbretirodetalles(id_pedido,id_producto,codigo_producto,nombre_producto,cantidad,precio_unitario,subtotal) VALUES (?,?,?,?,?,?,?)');
+            $query->execute([$orderId,$productId,$product['codigo_producto'],$product['nombre_producto'],$quantity,self::decimal($price,2),self::decimal($price*$quantity,2)]);
+            $this->stock($orderId,(int)$productId,$quantity,'reserva',$userId,$actor['nombres'].' '.$actor['apellidos'],'Reserva del producto '.$code);
+            $this->history($orderId,null,'pendiente',$userId,$actor['nombres'].' '.$actor['apellidos'],'Reserva enviada desde la aplicación; pendiente de aceptación.');
+            $this->db->commit();
+
+            $order=$this->find($orderId,$userId,false);
+            if(!$order) throw new RuntimeException('No se pudo leer la reserva creada.');
+            return $order+['repeated'=>false,'available_stock'=>$this->availableStock((int)$productId)];
+        } catch(Throwable $error) {
+            if($this->db->inTransaction()) $this->db->rollBack();
+            throw $error;
+        }
+    }
+
+    private function availableStock(int $productId): int
+    {
+        $query=$this->db->prepare('SELECT GREATEST(COALESCE(stock_actual-stock_reservado,0),0) FROM tbinventario WHERE id_producto=?');
+        $query->execute([$productId]);
+        return (int)floor((float)$query->fetchColumn());
+    }
+
     private function createOnce(int $userId,array $input): array
     {
         $contact=self::contact($input);$key=$input['solicitud']??'';$quote=$input['cotizacion']??'';

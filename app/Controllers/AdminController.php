@@ -50,6 +50,51 @@ final class AdminController
         $ordersByStatus = $orderStatement->fetchAll();
         $orderLabels = OrderModel::LABELS;
 
+        $zone = new DateTimeZone('America/El_Salvador');
+        $firstMonth = (new DateTimeImmutable('today', $zone))->modify('first day of this month')->modify('-5 months');
+        $salesStart = $firstMonth->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s');
+        $monthNames = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+        $monthlySalesMap = [];
+        $topProducts = [];
+        if (OrderModel::enabled($database) && OrderModel::cashEnabled($database)) {
+            $trendStatement = $database->prepare(
+                "SELECT DATE_FORMAT(DATE_SUB(fecha_pago, INTERVAL 6 HOUR),'%Y-%m') AS month,COALESCE(SUM(total),0) AS total
+                 FROM tbventas
+                 WHERE cobro_solicitud IS NOT NULL AND estado='pagada' AND fecha_pago>=?
+                 GROUP BY month ORDER BY month"
+            );
+            $trendStatement->execute([$salesStart]);
+            foreach ($trendStatement->fetchAll() as $row) $monthlySalesMap[$row['month']] = (float)$row['total'];
+
+            $topProductsStatement = $database->prepare(
+                "SELECT d.nombre_producto AS name,SUM(d.cantidad) AS units
+                 FROM tbventas s
+                 JOIN tbretirodetalles d ON d.id_pedido=s.id_pedido
+                 WHERE s.cobro_solicitud IS NOT NULL AND s.estado='pagada' AND s.id_pedido IS NOT NULL AND s.fecha_pago>=?
+                 GROUP BY d.id_producto,d.nombre_producto
+                 ORDER BY units DESC,d.nombre_producto ASC LIMIT 6"
+            );
+            $topProductsStatement->execute([$salesStart]);
+            $topProducts = $topProductsStatement->fetchAll();
+        }
+        $monthlySales = [];
+        for ($month = clone $firstMonth; $month <= new DateTimeImmutable('first day of this month', $zone); $month = $month->modify('+1 month')) {
+            $key = $month->format('Y-m');
+            $monthlySales[] = ['month'=>$key,'label'=>$monthNames[(int)$month->format('n')-1].' '.$month->format('Y'),'total'=>$monthlySalesMap[$key]??0.0];
+        }
+
+        $stockStatusStatement = $database->query(
+            "SELECT CASE
+                WHEN i.stock_actual-i.stock_reservado<=0 THEN 'Agotado'
+                WHEN i.stock_actual-i.stock_reservado<=i.stock_minimo THEN 'Pocas unidades'
+                ELSE 'Disponible'
+             END AS name,COUNT(*) AS total
+             FROM tbinventario i
+             GROUP BY name
+             ORDER BY FIELD(name,'Agotado','Pocas unidades','Disponible')"
+        );
+        $stockStatuses = $stockStatusStatement->fetchAll();
+
         require BASE_PATH . '/app/Views/admin/index.php';
     }
 

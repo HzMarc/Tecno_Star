@@ -2,6 +2,7 @@
 declare(strict_types=1);
 require_once BASE_PATH.'/app/Models/AccountModel.php';require_once BASE_PATH.'/app/Controllers/SaleController.php';require_once BASE_PATH.'/core/LoginLimiter.php';require_once BASE_PATH.'/core/OrderMail.php';
 require_once BASE_PATH.'/core/RecoveryMail.php';
+require_once BASE_PATH.'/app/Models/ServiceModel.php';
 final class AccountController
 {
     public function users():void
@@ -11,6 +12,44 @@ final class AccountController
     public function editor():void
     {
         $_SERVER['HTTP_ACCEPT']='application/json';if(!Auth::requireRole('Administrador') || !SaleController::available())return;$id=filter_var($_GET['id']??null,FILTER_VALIDATE_INT);$q=Database::connection()->prepare('SELECT u.id_usuario,u.nombres,u.apellidos,u.correo,u.estado,u.cuenta_revision,r.nombre_rol,c.telefono,(SELECT pedidos FROM tbpersonalpermisos WHERE id_usuario=u.id_usuario) AS permiso_pedidos FROM tbusuarios u JOIN tbroles r ON r.id_rol=u.id_rol LEFT JOIN tbclientes c ON c.id_usuario=u.id_usuario WHERE u.id_usuario=?');$q->execute([$id]);$row=$q->fetch();if(!$row){ErrorHandler::respond(404,'Usuario no encontrado.');return;}$row['pedidos']=OrderModel::isStaff($row)?'1':'0';$row['servicios']=ServiceModel::staff(Database::connection(),(int)$row['id_usuario'])?'1':'0';header('Content-Type: application/json; charset=utf-8');echo json_encode(['ok'=>true,'user'=>$row],JSON_THROW_ON_ERROR);
+    }
+    public function history():void
+    {
+        $_SERVER['HTTP_ACCEPT']='application/json';
+        if(!Auth::requireRole('Administrador') || !SaleController::available())return;
+        $id=filter_var($_GET['id']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+        if(!$id){ErrorHandler::respond(422,'Cliente inválido.');return;}
+        $database=Database::connection();
+        $query=$database->prepare("SELECT u.id_usuario,u.nombres,u.apellidos,u.correo FROM tbusuarios u JOIN tbroles r ON r.id_rol=u.id_rol WHERE u.id_usuario=? AND r.nombre_rol='Cliente'");
+        $query->execute([$id]);$customer=$query->fetch();
+        if(!$customer){ErrorHandler::respond(404,'No encontramos este cliente.');return;}
+
+        $query=$database->prepare("SELECT s.id_venta,s.codigo_venta,s.total,s.estado,s.fecha_pago,o.codigo_pedido,d.cantidad,d.nombre_producto
+             FROM tbventas s JOIN tbpedidos o ON o.id_pedido=s.id_pedido
+             LEFT JOIN tbretirodetalles d ON d.id_pedido=o.id_pedido
+             WHERE o.id_usuario=? AND s.cobro_solicitud IS NOT NULL
+             ORDER BY s.fecha_pago DESC,s.id_venta DESC,d.id_detalle ASC");
+        $query->execute([$id]);$purchaseRows=$query->fetchAll();$purchases=[];
+        foreach($purchaseRows as $row){
+            $saleId=(int)$row['id_venta'];
+            if(!isset($purchases[$saleId]))$purchases[$saleId]=['id_venta'=>$saleId,'codigo_venta'=>$row['codigo_venta'],'total'=>$row['total'],'estado'=>$row['estado'],'fecha_pago'=>$row['fecha_pago'],'codigo_pedido'=>$row['codigo_pedido'],'productos'=>[]];
+            if($row['nombre_producto']!==null)$purchases[$saleId]['productos'][]=(string)$row['cantidad'].' × '.$row['nombre_producto'];
+        }
+        foreach($purchases as &$purchase)$purchase['productos']=$purchase['productos']?implode(' · ',$purchase['productos']):'Compra de productos';unset($purchase);
+        $purchases=array_values($purchases);
+        $services=[];
+        if(ServiceModel::installed($database)){
+            $query=$database->prepare("SELECT sr.id_solicitud,sr.codigo,sr.nombre_servicio,sr.cantidad,sr.unidad,sr.estado,sr.total,sr.created_at,
+                        s.codigo_venta,s.estado AS sale_state,s.total AS paid_total
+                 FROM tbserviciosolicitudes sr LEFT JOIN tbventas s ON s.id_solicitud_servicio=sr.id_solicitud
+                 WHERE sr.id_usuario=? ORDER BY sr.created_at DESC,sr.id_solicitud DESC");
+            $query->execute([$id]);$services=$query->fetchAll();
+        }
+        $summary=['purchases'=>count($purchases),'purchases_paid'=>0.0,'refunds'=>0.0,'services'=>count($services),'services_paid'=>0.0];
+        foreach($purchases as $purchase){if($purchase['estado']==='pagada')$summary['purchases_paid']+=(float)$purchase['total'];elseif($purchase['estado']==='anulada')$summary['refunds']+=(float)$purchase['total'];}
+        foreach($services as $service){if($service['sale_state']==='pagada')$summary['services_paid']+=(float)$service['paid_total'];elseif($service['sale_state']==='anulada')$summary['refunds']+=(float)$service['paid_total'];}
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['ok'=>true,'customer'=>$customer,'summary'=>$summary,'purchases'=>$purchases,'services'=>$services],JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_INVALID_UTF8_SUBSTITUTE|JSON_THROW_ON_ERROR);
     }
     public function save():void{$this->write('admin');}
     public function profile():void{$this->write('profile');}

@@ -11,6 +11,7 @@ $shellItems = [
     ['services', 'Servicios', 'bi-printer', '/admin/services'],
     ['cash', 'Caja', 'bi-cash-coin', '/admin/cash'],
     ['sales', 'Ventas', 'bi-graph-up-arrow', '/admin/sales'],
+    ['reports', 'Reportes', 'bi-bar-chart-line', '/admin/reports'],
     ['users', 'Usuarios', 'bi-people', '/admin/users'],
 ];
 ?>

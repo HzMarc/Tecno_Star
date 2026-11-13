@@ -82,6 +82,33 @@ $formatNumber = static fn (float|int $amount): string => number_format($amount);
                     </div>
                     <a class="admin-panel__link" href="<?= app_url_html('/admin/users') ?>"><span>Gestionar usuarios</span><i class="bi bi-arrow-right"></i></a>
                 </article>
+
+                <article class="admin-panel admin-panel--wide">
+                    <div class="admin-panel__heading">
+                        <div><span class="admin-eyebrow">Últimos seis meses</span><h2>Ingresos por mes</h2></div>
+                        <i class="bi bi-graph-up-arrow" aria-hidden="true"></i>
+                    </div>
+                    <div id="monthly-sales-chart" class="admin-chart" aria-label="Ingresos mensuales de ventas cobradas"></div>
+                    <a class="admin-panel__link" href="<?= app_url_html('/admin/reports') ?>">Generar reportes <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                </article>
+
+                <article class="admin-panel">
+                    <div class="admin-panel__heading">
+                        <div><span class="admin-eyebrow">Últimos seis meses</span><h2>Productos más vendidos</h2></div>
+                        <i class="bi bi-trophy" aria-hidden="true"></i>
+                    </div>
+                    <div id="top-products-chart" class="admin-chart" aria-label="Productos con más unidades vendidas"></div>
+                    <a class="admin-panel__link" href="<?= app_url_html('/admin/reports') ?>">Ver reporte de ventas <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                </article>
+
+                <article class="admin-panel">
+                    <div class="admin-panel__heading">
+                        <div><span class="admin-eyebrow">Inventario actual</span><h2>Disponibilidad de productos</h2></div>
+                        <i class="bi bi-box-seam" aria-hidden="true"></i>
+                    </div>
+                    <div id="inventory-status-chart" class="admin-chart" aria-label="Productos agotados, con pocas unidades y disponibles"></div>
+                    <a class="admin-panel__link" href="<?= app_url_html('/admin/inventory') ?>">Revisar existencias <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                </article>
             </section>
         </main>
     </div>
@@ -89,6 +116,9 @@ $formatNumber = static fn (float|int $amount): string => number_format($amount);
         const categoryData = <?= json_encode($categories, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
         const orderData = <?= json_encode($ordersByStatus, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
         const orderLabels = <?= json_encode($orderLabels ?? [], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+        const monthlySales = <?= json_encode($monthlySales, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+        const topProducts = <?= json_encode($topProducts, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+        const stockStatuses = <?= json_encode($stockStatuses, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
         const chartColors = ['#1a56db', '#0d6efd', '#6c757d', '#7c3aed', '#16844b', '#c36b00'];
 
         if (window.ApexCharts) {
@@ -112,6 +142,34 @@ $formatNumber = static fn (float|int $amount): string => number_format($amount);
                 legend: { position: 'bottom', fontSize: '12px' },
                 dataLabels: { enabled: true },
                 noData: { text: 'No hay pedidos registrados' }
+            }).render();
+
+            new ApexCharts(document.querySelector('#monthly-sales-chart'), {
+                chart: { type: 'area', height: 290, toolbar: { show: false }, fontFamily: 'Open Sans, sans-serif', zoom: { enabled: false } },
+                series: [{ name: 'Ventas cobradas', data: monthlySales.map(item => Number(item.total)) }],
+                xaxis: { categories: monthlySales.map(item => item.label), labels: { style: { colors: '#738198' } }, axisBorder: { show: false }, axisTicks: { show: false } },
+                yaxis: { labels: { formatter: value => '$' + Number(value).toLocaleString('en-US'), style: { colors: '#738198' } } },
+                colors: ['#2054dd'], stroke: { curve: 'smooth', width: 3 },
+                fill: { type: 'gradient', gradient: { opacityFrom: .24, opacityTo: .02, stops: [0, 90, 100] } },
+                markers: { size: 4 }, dataLabels: { enabled: false }, grid: { borderColor: '#edf1f7', strokeDashArray: 4 },
+                tooltip: { y: { formatter: value => '$' + Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) } },
+                noData: { text: 'No hay ventas cobradas en este período' }
+            }).render();
+
+            new ApexCharts(document.querySelector('#top-products-chart'), {
+                chart: { type: 'bar', height: 290, toolbar: { show: false }, fontFamily: 'Open Sans, sans-serif' },
+                series: [{ name: 'Unidades', data: topProducts.map(item => Number(item.units)) }],
+                xaxis: { categories: topProducts.map(item => item.name), labels: { style: { colors: '#738198' } } },
+                colors: ['#6d48c8'], plotOptions: { bar: { horizontal: true, borderRadius: 5, barHeight: '55%', distributed: true } },
+                dataLabels: { enabled: true, style: { colors: ['#fff'] } }, grid: { borderColor: '#edf1f7' },
+                legend: { show: false }, noData: { text: 'No hay productos vendidos en este período' }
+            }).render();
+
+            new ApexCharts(document.querySelector('#inventory-status-chart'), {
+                chart: { type: 'donut', height: 290, fontFamily: 'Open Sans, sans-serif' },
+                series: stockStatuses.map(item => Number(item.total)), labels: stockStatuses.map(item => item.name),
+                colors: ['#d94c5c', '#e5a52e', '#16844b'], legend: { position: 'bottom', fontSize: '12px' },
+                dataLabels: { enabled: true }, noData: { text: 'No hay existencias registradas' }
             }).render();
         }
     </script>

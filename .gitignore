@@ -24,3 +24,4 @@ graphify-out/
 .graphify_detect.json
 .graphify/
 graphify.log
+/tmp/

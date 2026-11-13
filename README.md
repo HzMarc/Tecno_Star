@@ -188,3 +188,7 @@ El correo de prueba autorizado fue aceptado por Gmail y localizado en Recibidos 
 La regresión final del módulo de servicios completó 522 comprobaciones en una instancia de MariaDB aislada, con correo real desactivado. Cubrió catálogo, inventario, carrito, pedidos, ventas, cuentas, compras, avisos de retiro y el recorrido completo de servicios hasta cobro y entrega. Las dos pruebas de actualización conservaron los datos anteriores. Se revisaron escritorio y móvil de 360 px.
 
 Se reparó, con autorización, `phpmyadmin.pma__userconfig`: se restablecieron las preferencias de phpMyAdmin y se conservaron sus archivos dañados en el respaldo físico. Todas las tablas del negocio conservaron su huella. MySQL reinició con su configuración normal y precarga activada; la tabla reparada devuelve `OK`.
+
+## Aplicación móvil
+
+[Tecno Star · App móvil](https://github.com/HzMarc/Tecno_Star_usr)

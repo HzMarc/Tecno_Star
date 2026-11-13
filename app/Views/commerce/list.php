@@ -9,5 +9,22 @@
 <label class="order-consent" data-user-permission hidden><input type="checkbox" name="pedidos" value="1"><span>Permitir gestionar pedidos y cobrar en caja.</span></label>
 <?php if(ServiceModel::installed(Database::connection())): ?><label class="order-consent" data-user-service-permission hidden><input type="checkbox" name="servicios" value="1"><span>Permitir atender, cotizar y cobrar servicios de papelería.</span></label><?php endif; ?>
 <div data-user-password><div class="order-fields"><label>Contraseña inicial<input type="password" name="nueva" autocomplete="new-password" minlength="12" maxlength="72"></label><label>Repetir contraseña<input type="password" name="confirmacion" autocomplete="new-password" minlength="12" maxlength="72"></label></div></div><p class="commerce-help">Los cambios de acceso se aplican de inmediato. El correo de una cuenta existente no se puede cambiar.</p>
+<p class="commerce-help" data-employee-access-help hidden>El empleado solo tendrá acceso a los módulos que marques. Administración, inventario, productos, usuarios y reportes siguen reservados para el administrador.</p>
 <p class="order-error" data-commerce-error role="alert" hidden></p><footer><button class="order-secondary" type="button" data-commerce-close>Cancelar</button><button class="order-primary" type="submit">Guardar usuario</button></footer></form></dialog>
+<dialog class="order-modal commerce-history-modal" data-history-modal data-history-url="<?= app_url_html('/admin/users/history') ?>" data-sale-url="<?= app_url_html('/sales/detail') ?>" data-service-url="<?= app_url_html('/services/detail') ?>" aria-labelledby="history-title">
+    <header><div><h2 id="history-title">Historial del cliente</h2><p data-history-customer></p></div><button type="button" data-commerce-close aria-label="Cerrar">×</button></header>
+    <div class="history-loading" data-history-loading role="status">Cargando compras y servicios…</div>
+    <p class="history-error" data-history-error role="alert" hidden></p>
+    <div class="history-content" data-history-content hidden>
+        <div class="history-metrics">
+            <article><span>Compras</span><strong data-history-purchases-count>0</strong></article>
+            <article><span>Compras pagadas</span><strong data-history-purchases-paid>$0.00</strong></article>
+            <article><span>Reembolsos</span><strong data-history-refunds>$0.00</strong></article>
+            <article><span>Solicitudes de servicio</span><strong data-history-services-count>0</strong></article>
+            <article><span>Servicios pagados</span><strong data-history-services-paid>$0.00</strong></article>
+        </div>
+        <section class="history-section"><div class="history-section__heading"><h3>Compras de productos</h3><span>Compras cobradas en caja</span></div><div class="table-responsive"><table class="history-table"><thead><tr><th>Comprobante</th><th>Productos</th><th>Fecha</th><th>Total</th><th>Estado</th><th></th></tr></thead><tbody data-history-purchase-rows></tbody></table></div></section>
+        <section class="history-section"><div class="history-section__heading"><h3>Servicios de papelería</h3><span>Solicitudes y pagos</span></div><div class="table-responsive"><table class="history-table"><thead><tr><th>Solicitud</th><th>Servicio</th><th>Fecha</th><th>Total / cotización</th><th>Estado</th><th></th></tr></thead><tbody data-history-service-rows></tbody></table></div></section>
+    </div>
+</dialog>
 <?php endif;require BASE_PATH.'/app/Views/commerce/foot.php'; ?>
