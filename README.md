@@ -189,6 +189,19 @@ La regresión final del módulo de servicios completó 522 comprobaciones en una
 
 Se reparó, con autorización, `phpmyadmin.pma__userconfig`: se restablecieron las preferencias de phpMyAdmin y se conservaron sus archivos dañados en el respaldo físico. Todas las tablas del negocio conservaron su huella. MySQL reinició con su configuración normal y precarga activada; la tabla reparada devuelve `OK`.
 
+## Base de datos con datos
+
+[`tecno_star.sql`](tecno_star.sql) es un volcado poblado y anonimizado para desarrollo y demostración. Conserva el catálogo, el inventario y las operaciones de ejemplo; reemplaza los datos personales y omite tokens de recuperación.
+
+Credenciales locales de demostración:
+
+| Rol | Correo | Contraseña |
+| --- | --- | --- |
+| Administrador | `admin@admin.com` | `12345678` |
+| Cliente | `cliente@clinete.com` | `12345678` |
+
+Estas credenciales son solo para la base de demostración local; cámbialas antes de usar el sistema en producción.
+
 ## Aplicación móvil
 
 [Tecno Star · App móvil](https://github.com/HzMarc/Tecno_Star_usr)
